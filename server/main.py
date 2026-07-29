@@ -138,7 +138,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration supporting development and Tauri origins
+# CORS configuration supporting development, Tauri, and Browser Extension origins
 origins = [
     "null",
     "http://localhost:5173",
@@ -149,6 +149,7 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"chrome-extension://.*|moz-extension://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -156,7 +157,7 @@ app.add_middleware(
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "version": "2.0.0"}
+    return {"status": "ok", "version": "2.1.1"}
 
 @app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket, token: Optional[str] = None):
@@ -180,6 +181,7 @@ from server.routers.download import router as download_router
 from server.routers.history import router as history_router
 from server.routers.config import router as config_router
 from server.routers.spotify import router as spotify_router
+from server.routers.extension import router as extension_router
 
 app.include_router(metadata_router, prefix="/api")
 app.include_router(queue_router, prefix="/api")
@@ -187,4 +189,5 @@ app.include_router(download_router, prefix="/api")
 app.include_router(history_router, prefix="/api")
 app.include_router(config_router, prefix="/api")
 app.include_router(spotify_router, prefix="/api")
+app.include_router(extension_router, prefix="/api")
 

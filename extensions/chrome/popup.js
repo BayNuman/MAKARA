@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 1. Check connection status with local Desktop App
   async function checkServerStatus() {
     try {
-      const res = await fetch(`${API_BASE}/config/system/status`, { method: "GET" });
+      const res = await fetch(`${API_BASE}/extension/ping`, { method: "GET" });
       if (res.ok) {
         statusDot.classList.add("connected");
         statusDot.title = "Connected to Desktop App";
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const profile = profileSelect.value;
 
     try {
-      const res = await fetch(`${API_BASE}/queue/add`, {
+      const res = await fetch(`${API_BASE}/extension/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

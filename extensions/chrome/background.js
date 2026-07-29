@@ -18,7 +18,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     }
 
     try {
-      await fetch(`${API_BASE}/queue/add`, {
+      await fetch(`${API_BASE}/extension/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
