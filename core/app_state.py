@@ -148,6 +148,8 @@ def load_app_preferences(prefs):
             prefs.mode = data.get("mode", prefs.mode)
             prefs.spotify_client_id = data.get("spotify_client_id", prefs.spotify_client_id)
             prefs.spotify_client_secret = data.get("spotify_client_secret", prefs.spotify_client_secret)
+            prefs.enable_clipboard_listener = data.get("enable_clipboard_listener", prefs.enable_clipboard_listener)
+            prefs.auto_fetch_lyrics = data.get("auto_fetch_lyrics", prefs.auto_fetch_lyrics)
         except Exception as e:
             print(f"[warning] Failed to load settings: {e}")
 
@@ -163,7 +165,9 @@ def save_app_preferences(prefs):
             "compact_mode": getattr(prefs, "compact_mode", False),
             "mode": getattr(prefs, "mode", "Video"),
             "spotify_client_id": getattr(prefs, "spotify_client_id", ""),
-            "spotify_client_secret": getattr(prefs, "spotify_client_secret", "")
+            "spotify_client_secret": getattr(prefs, "spotify_client_secret", ""),
+            "enable_clipboard_listener": getattr(prefs, "enable_clipboard_listener", True),
+            "auto_fetch_lyrics": getattr(prefs, "auto_fetch_lyrics", True)
         }
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
@@ -183,6 +187,8 @@ class AppPreferences:
     # Spotify Integration
     spotify_client_id: str = ""
     spotify_client_secret: str = ""
+    enable_clipboard_listener: bool = True
+    auto_fetch_lyrics: bool = True
 
     # Shared settings (SponsorBlock, browser cookies, speed limits)
     sponsorblock_enabled: bool = False

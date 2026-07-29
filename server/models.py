@@ -10,6 +10,8 @@ class AppPreferencesModel(BaseModel):
     custom_settings: Dict
     spotify_client_id: str
     spotify_client_secret: str
+    enable_clipboard_listener: bool = True
+    auto_fetch_lyrics: bool = True
     sponsorblock_enabled: bool
     browser_cookies: str
     speed_limit: Optional[str]
@@ -36,6 +38,8 @@ class AppPreferencesPatchModel(BaseModel):
     custom_settings: Optional[Dict] = None
     spotify_client_id: Optional[str] = None
     spotify_client_secret: Optional[str] = None
+    enable_clipboard_listener: Optional[bool] = None
+    auto_fetch_lyrics: Optional[bool] = None
     sponsorblock_enabled: Optional[bool] = None
     browser_cookies: Optional[str] = None
     speed_limit: Optional[str] = None

@@ -15,74 +15,108 @@ router = APIRouter(
     dependencies=[Depends(verify_token)]
 )
 
-def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -> list:
-    # 1. Fetch access token
-    auth_str = f"{client_id}:{client_secret}"
-    auth_b64 = base64.b64encode(auth_str.encode('utf-8')).decode('utf-8')
-    
-    token_url = "https://accounts.spotify.com/api/token"
-    payload = urllib.parse.urlencode({"grant_type": "client_credentials"}).encode('utf-8')
-    
+def fetch_spotify_tracks_from_embed(playlist_id: str) -> list:
+    """Fallback parser that extracts tracks from Spotify embed page without requiring API keys."""
+    url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
     headers = {
-        "Authorization": f"Basic {auth_b64}",
-        "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=10) as res:
+        html = res.read().decode('utf-8')
+        
+    match = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
+    if not match:
+        raise Exception("Spotify embed parse failed: JSON script tag not found")
+        
+    data = json.loads(match.group(1).strip())
+    entity = data.get("props", {}).get("pageProps", {}).get("state", {}).get("data", {}).get("entity", {})
+    track_list = entity.get("trackList", [])
     
-    token_req = urllib.request.Request(token_url, data=payload, headers=headers, method='POST')
-    try:
-        with urllib.request.urlopen(token_req, timeout=10) as res:
-            token_data = json.loads(res.read().decode('utf-8'))
-            access_token = token_data["access_token"]
-    except Exception as e:
-        raise Exception(f"Spotify Authentication failed. Please check your Spotify Client ID and Client Secret. Details: {str(e)}")
-
-    # 2. Fetch tracks
     tracks = []
-    next_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=100"
-    tracks_headers = {
-        "Authorization": f"Bearer {access_token}",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
-    
-    while next_url and len(tracks) < 300:
-        req = urllib.request.Request(next_url, headers=tracks_headers)
-        try:
-            with urllib.request.urlopen(req, timeout=10) as res:
-                res_data = json.loads(res.read().decode('utf-8'))
-                for item in res_data.get("items", []):
-                    track_info = item.get("track")
-                    if not track_info:
-                        continue
-                    
-                    name = track_info.get("name")
-                    artists = [a.get("name") for a in track_info.get("artists", [])]
-                    duration_ms = track_info.get("duration_ms", 0)
-                    duration_sec = int(duration_ms / 1000)
-                    
-                    thumb_url = ""
-                    album = track_info.get("album")
-                    if album and album.get("images"):
-                        thumb_url = album.get("images")[0].get("url")
-                        
-                    tracks.append({
-                        "name": name,
-                        "artists": ", ".join(artists) if artists else "Unknown Artist",
-                        "duration": duration_sec,
-                        "thumbnail": thumb_url
-                    })
-                next_url = res_data.get("next")
-        except urllib.error.HTTPError as e:
-            if e.code == 403:
-                raise Exception("Spotify 403 Forbidden: 1) Çalma listesinin 'Herkese Açık' (Public) olduğundan emin olun (Gizli/Private listeler indirilemez). 2) Spotify Dashboard'da Client ID/Secret bilgilerini kontrol edin.")
-            elif e.code == 404:
-                raise Exception("Spotify 404 Not Found: Çalma listesi bulunamadı veya silinmiş.")
-            else:
-                raise Exception(f"Spotify API Error {e.code}: {e.reason}")
-        except Exception as e:
-            raise Exception(f"Failed to fetch tracks from Spotify API. Details: {str(e)}")
+    for item in track_list:
+        title = item.get("title", "")
+        artists = item.get("subtitle", "")
+        duration_ms = item.get("duration", 0)
+        duration_sec = int(duration_ms / 1000) if isinstance(duration_ms, (int, float)) else 0
+        
+        thumb_url = ""
+        cover_art = item.get("coverArt", {})
+        if cover_art and cover_art.get("sources"):
+            thumb_url = cover_art.get("sources")[0].get("url", "")
+            
+        if title:
+            tracks.append({
+                "name": title,
+                "artists": artists if artists else "Unknown Artist",
+                "duration": duration_sec,
+                "thumbnail": thumb_url
+            })
             
     return tracks
+
+def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -> list:
+    if client_id and client_secret:
+        try:
+            # 1. Fetch access token via Spotify Web API
+            auth_str = f"{client_id}:{client_secret}"
+            auth_b64 = base64.b64encode(auth_str.encode('utf-8')).decode('utf-8')
+            
+            token_url = "https://accounts.spotify.com/api/token"
+            payload = urllib.parse.urlencode({"grant_type": "client_credentials"}).encode('utf-8')
+            
+            headers = {
+                "Authorization": f"Basic {auth_b64}",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            
+            token_req = urllib.request.Request(token_url, data=payload, headers=headers, method='POST')
+            with urllib.request.urlopen(token_req, timeout=10) as res:
+                token_data = json.loads(res.read().decode('utf-8'))
+                access_token = token_data["access_token"]
+
+            # 2. Fetch tracks
+            tracks = []
+            next_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=100"
+            tracks_headers = {
+                "Authorization": f"Bearer {access_token}",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+            
+            while next_url and len(tracks) < 300:
+                req = urllib.request.Request(next_url, headers=tracks_headers)
+                with urllib.request.urlopen(req, timeout=10) as res:
+                    res_data = json.loads(res.read().decode('utf-8'))
+                    for item in res_data.get("items", []):
+                        track_info = item.get("track")
+                        if not track_info:
+                            continue
+                        
+                        name = track_info.get("name")
+                        artists = [a.get("name") for a in track_info.get("artists", [])]
+                        duration_ms = track_info.get("duration_ms", 0)
+                        duration_sec = int(duration_ms / 1000)
+                        
+                        thumb_url = ""
+                        album = track_info.get("album")
+                        if album and album.get("images"):
+                            thumb_url = album.get("images")[0].get("url")
+                            
+                        tracks.append({
+                            "name": name,
+                            "artists": ", ".join(artists) if artists else "Unknown Artist",
+                            "duration": duration_sec,
+                            "thumbnail": thumb_url
+                        })
+                    next_url = res_data.get("next")
+            if tracks:
+                return tracks
+        except Exception as api_err:
+            pass # Fallback to embed scraper below
+
+    # Fallback to embed page scraping (no API credentials required)
+    return fetch_spotify_tracks_from_embed(playlist_id)
 
 @router.post("/playlist-tracks")
 async def get_playlist_tracks(req_body: SpotifyTracksRequest, request: Request):
@@ -101,12 +135,6 @@ async def get_playlist_tracks(req_body: SpotifyTracksRequest, request: Request):
     client_id = prefs.spotify_client_id
     client_secret = prefs.spotify_client_secret
     
-    if not client_id or not client_secret:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Lütfen Ayarlar panelinden Spotify Client ID ve Client Secret değerlerini girin. / Please configure Spotify Client ID and Client Secret in Settings."
-        )
-        
     try:
         # Run blocking network requests in a separate thread
         tracks = await asyncio.to_thread(fetch_spotify_tracks, playlist_id, client_id, client_secret)
@@ -114,5 +142,5 @@ async def get_playlist_tracks(req_body: SpotifyTracksRequest, request: Request):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail=f"Spotify çözümlenemedi. Detay: {str(e)}"
         )

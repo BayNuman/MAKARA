@@ -596,8 +596,15 @@ def _set_completed_status(task, output_file, lang, emitter: EventEmitter):
     task.percent = 100.0
     
     thumb_path = getattr(task, "thumbnail_path", None)
-    if getattr(task, "mode", "Video") == "Audio" and output_file and os.path.exists(output_file):
-        # Enqueue waveform generation in a single-threaded queue to prevent CPU boğulma
+    if getattr(task, "mode", "Video").lower() == "audio" and output_file and os.path.exists(output_file):
+        # 1. Fetch & embed synchronized lyrics via LRCLIB if enabled
+        try:
+            from core.lyrics import process_track_lyrics
+            process_track_lyrics(output_file, getattr(task, "title", ""), duration_sec=0)
+        except Exception as lyr_err:
+            logging.warning(f"[Downloader] Lyrics embedding skipped: {lyr_err}")
+
+        # 2. Enqueue waveform generation in a single-threaded queue to prevent CPU boğulma
         def cb(png):
             _on_waveform_done(task.id, png, emitter)
         enqueue_waveform_generation(task, output_file, cb)

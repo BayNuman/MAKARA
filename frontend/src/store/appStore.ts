@@ -32,6 +32,8 @@ export interface AppPreferences {
   custom_settings: Record<string, any>;
   spotify_client_id: string;
   spotify_client_secret: string;
+  enable_clipboard_listener: boolean;
+  auto_fetch_lyrics: boolean;
   sponsorblock_enabled: boolean;
   browser_cookies: string;
   speed_limit: string | null;
@@ -88,11 +90,13 @@ interface AppState {
   metadataState: MetadataState;
   toasts: ToastMessage[];
   logs: string[];
+  lastCopiedUrl: string;
 
-  // Toast actions
+  // Toast & Clipboard actions
   addToast: (text: string, type?: ToastMessage['type']) => void;
   removeToast: (id: string) => void;
   clearLogs: () => void;
+  setLastCopiedUrl: (url: string) => void;
 
   // Preferences
   fetchPreferences: () => Promise<void>;
@@ -141,8 +145,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   metadataState: { loading: false, data: null, error: null },
   toasts: [],
   logs: [],
+  lastCopiedUrl: '',
 
   clearLogs: () => set({ logs: [] }),
+  setLastCopiedUrl: (url: string) => set({ lastCopiedUrl: url }),
 
   addToast: (text, type = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);

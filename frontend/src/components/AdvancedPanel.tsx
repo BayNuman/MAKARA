@@ -309,6 +309,20 @@ export const AdvancedPanel: React.FC = () => {
                     onClick={() => handleToggle('sponsorblock_enabled')}
                   />
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[var(--ink)]">{currentLang === 'tr' ? 'Otomatik Pano Takibi' : 'Clipboard Listener'}</span>
+                  <div 
+                    className={`toggle-sw ${preferences.enable_clipboard_listener !== false ? 'on' : ''}`}
+                    onClick={() => handleToggle('enable_clipboard_listener')}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[var(--ink)]">{currentLang === 'tr' ? 'Şarkı Sözleri (LRCLIB)' : 'Synced Lyrics (LRCLIB)'}</span>
+                  <div 
+                    className={`toggle-sw ${preferences.auto_fetch_lyrics !== false ? 'on' : ''}`}
+                    onClick={() => handleToggle('auto_fetch_lyrics')}
+                  />
+                </div>
               </div>
 
               {/* Advanced Network Fields */}

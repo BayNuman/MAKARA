@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Globe } from 'lucide-react';
 import { useAppStore } from './store/appStore';
 import { useWebSocket } from './hooks/useWebSocket';
+import { useClipboardListener } from './hooks/useClipboardListener';
 import { UrlPanel } from './components/UrlPanel';
 import { PreviewPanel } from './components/PreviewPanel';
 import { AdvancedPanel } from './components/AdvancedPanel';
@@ -24,6 +25,9 @@ const App: React.FC = () => {
 
   // 1. Establish single global WebSocket connection
   useWebSocket(handleWsEvent);
+
+  // 2. Enable smart clipboard listener hook
+  useClipboardListener();
 
   // 2. Fetch baseline data on app mount
   useEffect(() => {

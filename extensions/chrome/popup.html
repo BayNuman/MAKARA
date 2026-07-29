@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yt-dlp Downloader Pro</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: rgba(22, 27, 34, 0.75);
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --border: rgba(48, 54, 61, 0.8);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      width: 320px;
+      margin: 0;
+      padding: 16px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #238636, #1f6feb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #ffffff;
+      font-size: 11px;
+    }
+
+    .title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #f0f6fc;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #da3633;
+      box-shadow: 0 0 6px #da3633;
+      transition: background-color 0.3s;
+    }
+
+    .status-dot.connected {
+      background-color: #2ea043;
+      box-shadow: 0 0 6px #2ea043;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .url-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+
+    .url-text {
+      font-size: 11px;
+      color: #58a6ff;
+      word-break: break-all;
+      max-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: monospace;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      background: #161b22;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: 12px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #58a6ff;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      background-color: #21262d;
+      color: var(--text-dim);
+      cursor: not-allowed;
+    }
+
+    .toast {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      text-align: center;
+      display: none;
+    }
+
+    .toast.success {
+      display: block;
+      background: rgba(46, 160, 67, 0.15);
+      border: 1px solid #2ea043;
+      color: #3fb950;
+    }
+
+    .toast.error {
+      display: block;
+      background: rgba(218, 54, 51, 0.15);
+      border: 1px solid #da3633;
+      color: #f85149;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="brand">
+      <div class="logo-badge">PRO</div>
+      <div class="title">yt-dlp Companion</div>
+    </div>
+    <div id="statusDot" class="status-dot" title="Desktop App Connection Status"></div>
+  </div>
+
+  <div class="card">
+    <div class="url-label">Active Media Link</div>
+    <div id="activeUrl" class="url-text">Detecting active tab...</div>
+  </div>
+
+  <div class="form-group">
+    <label for="modeSelect">Download Mode</label>
+    <select id="modeSelect">
+      <option value="Video">🎥 Full Video (Video + Audio)</option>
+      <option value="Audio">🎵 Audio Only (MP3 Extraction)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="profileSelect">Format Profile</label>
+    <select id="profileSelect">
+      <option value="best">Highest Quality (Source Default)</option>
+      <option value="1080p">Full HD (1080p MP4)</option>
+      <option value="720p">HD (720p MP4)</option>
+      <option value="mp3">High Quality MP3 (320k)</option>
+    </select>
+  </div>
+
+  <button id="downloadBtn" class="btn" disabled>
+    <span>📥 Enqueue to Desktop App</span>
+  </button>
+
+  <div id="toastMsg" class="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
