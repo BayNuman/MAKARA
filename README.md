@@ -8,10 +8,10 @@
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078d4?logo=windows)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases)
-[![Platform: Android](https://img.shields.io/badge/Platform-Android%208%2B-3ddc84?logo=android)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases)
-[![Android CI](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml)
-[![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/yt-dlp-downloader-pro/stargazers)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078d4?logo=windows)](https://github.com/BayNuman/MAKARA/releases)
+[![Platform: Android](https://img.shields.io/badge/Platform-Android%208%2B-3ddc84?logo=android)](https://github.com/BayNuman/MAKARA/releases)
+[![Android CI](https://github.com/BayNuman/MAKARA/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/MAKARA/actions/workflows/android-ci.yml)
+[![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/MAKARA/stargazers)
 
 > **Makara Pro** (released under working repository `yt-dlp-downloader-pro`) is a high-performance cross-platform video, audio, and Spotify media manager powered by **Rust Tauri**, **React/Vite**, **yt-dlp**, and an embedded **FastAPI (Python 3.13)** sidecar backend.
 > 
@@ -23,9 +23,9 @@
 
 | Platform | Package | Release Asset |
 | :--- | :--- | :--- |
-| **🖥️ Windows** | Setup Installer (Recommended) | [📥 Download Setup.exe (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
-| **🖥️ Windows** | MSI Enterprise Package | [📥 Download Package.msi (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
-| **📱 Android** | APK (Android 8.0+) | [📥 Download App.apk](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk) |
+| **🖥️ Windows** | Setup Installer (Recommended) | [📥 Download Setup.exe (v2.2.0)](https://github.com/BayNuman/MAKARA/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
+| **🖥️ Windows** | MSI Enterprise Package | [📥 Download Package.msi (v2.2.0)](https://github.com/BayNuman/MAKARA/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
+| **📱 Android** | APK (Android 8.0+) | [📥 Download App.apk](https://github.com/BayNuman/MAKARA/releases/latest/download/app-release.apk) |
 
 > [!NOTE]
 > **Bundled Runtimes:** All desktop releases include pre-packaged Python sidecar executables, `yt-dlp` core, and `FFmpeg` binaries. No external system installations required.

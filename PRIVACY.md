@@ -30,4 +30,4 @@ Makara Pro ("the Application") is an open-source, desktop-based media management
 
 ## 4. Open-Source Transparency
 
-Because Makara Pro is 100% open-source under the MIT License, you can inspect the full source code on [GitHub](https://github.com/BayNuman/yt-dlp-downloader-pro) to verify all privacy mechanisms.
+Because Makara Pro is 100% open-source under the MIT License, you can inspect the full source code on [GitHub](https://github.com/BayNuman/MAKARA) to verify all privacy mechanisms.

@@ -8,10 +8,10 @@
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078d4?logo=windows)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases)
-[![Platform: Android](https://img.shields.io/badge/Platform-Android%208%2B-3ddc84?logo=android)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases)
-[![Android CI](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml)
-[![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/yt-dlp-downloader-pro/stargazers)
+[![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078d4?logo=windows)](https://github.com/BayNuman/MAKARA/releases)
+[![Platform: Android](https://img.shields.io/badge/Platform-Android%208%2B-3ddc84?logo=android)](https://github.com/BayNuman/MAKARA/releases)
+[![Android CI](https://github.com/BayNuman/MAKARA/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/MAKARA/actions/workflows/android-ci.yml)
+[![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/MAKARA/stargazers)
 
 > **Makara Pro** (resmi deposu `yt-dlp-downloader-pro` adıyla sunulmaktadır); **Rust Tauri**, **React/Vite**, **yt-dlp** ve gömülü **FastAPI (Python 3.13)** arka uç mimarisiyle geliştirilmiş, cam derinlikli (glassmorphic) şık arayüze sahip yüksek performanslı bir medya yöneticisidir.
 > 
@@ -23,9 +23,9 @@
 
 | Platform | Paket Türü | Yayın Paketi |
 | :--- | :--- | :--- |
-| **🖥️ Windows** | Kurulumcu (Önerilen) | [📥 Setup.exe İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
-| **🖥️ Windows** | MSI Paketi | [📥 Package.msi İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
-| **📱 Android** | APK (Android 8.0+) | [📥 Uygulama APK İndir](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk) |
+| **🖥️ Windows** | Kurulumcu (Önerilen) | [📥 Setup.exe İndir (v2.2.0)](https://github.com/BayNuman/MAKARA/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
+| **🖥️ Windows** | MSI Paketi | [📥 Package.msi İndir (v2.2.0)](https://github.com/BayNuman/MAKARA/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
+| **📱 Android** | APK (Android 8.0+) | [📥 Uygulama APK İndir](https://github.com/BayNuman/MAKARA/releases/latest/download/app-release.apk) |
 
 > [!NOTE]
 > **Gömülü Çalışma Zamanı (Bundled Dependencies):** Uygulama paketleri içerisinde Python sidecar servisi, `yt-dlp` çekirdeği ve `FFmpeg` ikili dosyaları paketlenmiş olarak gelir. Sisteminize ayrıca Python veya FFmpeg kurmanız gerekmez.
