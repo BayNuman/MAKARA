@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "baynuman",
+  "productName": "Makara Pro",
   "version": "0.1.0",
-  "identifier": "com.baynuman.ytdownloaderpro",
+  "identifier": "com.baynuman.makarapro",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "baynuman",
+        "title": "Makara Pro — Next-Gen Media & Spotify Downloader",
         "width": 1000,
         "height": 700,
         "resizable": true,

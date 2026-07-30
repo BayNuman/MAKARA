@@ -4,7 +4,7 @@ const API_BASE = "http://127.0.0.1:8765/api";
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "ytdlp-download-media",
-    title: "📥 Download with yt-dlp Pro",
+    title: "📥 Download with Makara Pro",
     contexts: ["link", "video", "audio", "page"]
   });
 });

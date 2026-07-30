@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "yt-dlp Downloader Pro Companion",
-  "version": "2.0.0",
-  "description": "One-click media downloader companion for yt-dlp Downloader Pro desktop app.",
+  "name": "Makara Pro Companion",
+  "version": "2.2.0",
+  "description": "One-click media downloader companion for Makara Pro desktop app.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -10,7 +10,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "yt-dlp Downloader Pro"
+    "default_title": "Makara Pro Companion"
   },
   "background": {
     "service_worker": "background.js"

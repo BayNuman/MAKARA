@@ -1,4 +1,4 @@
-# yt-dlp Downloader Pro
+# 📼 Makara Pro — Next-Gen Media & Spotify Downloader
 
 <p align="center">
   <b>🇺🇸 English</b> &nbsp;·&nbsp;
@@ -12,7 +12,9 @@
 [![Android CI](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml)
 [![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/yt-dlp-downloader-pro/stargazers)
 
-> A premium, high-performance video and audio download manager powered by **Rust Tauri**, **React/Vite**, and an embedded **FastAPI (Python)** sidecar backend. It features Spotify playlist parsing and batch downloading, interactive dual-handle time clipping with SponsorBlock and chapter overlays, custom theme engines, and zero-dependency standalone installers.
+> **Makara Pro** (formerly *yt-dlp Downloader Pro*) is a premium, high-performance cross-platform video, audio, and Spotify media manager powered by **Rust Tauri**, **React/Vite**, **yt-dlp**, and an embedded **FastAPI (Python 3.13)** sidecar backend.
+> 
+> Key features include **Zero-Config Spotify Playlist Resolving**, **Smart Clipboard Listener**, **Synced LRCLIB Lyrics Embedding**, **Zero-CPU Task Scheduler**, **Native OS Browser Cookie Detector**, and **Chrome / Edge Extension Companion**.
 
 ---
 
@@ -20,23 +22,22 @@
 
 | Platform | Format | Release Package |
 | :--- | :--- | :--- |
-| **🖥️ Windows** | Installer (Recommended) | [📥 Download Setup.exe (v2.0.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.0.0-setup.exe) |
-| **🖥️ Windows** | MSI Package | [📥 Download Package.msi (v2.0.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.0.0.msi) |
+| **🖥️ Windows** | Installer (Recommended) | [📥 Download Setup.exe (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
+| **🖥️ Windows** | MSI Package | [📥 Download Package.msi (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
 | **📱 Android** | APK (Android 8.0+) | [📥 Download App.apk](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk) |
 
 ---
 
 ## 🚀 Key Features
 
-| Feature | Generic Downloader | yt-dlp Downloader Pro |
+| Feature | Generic Downloader | Makara Pro |
 | :--- | :--- | :--- |
-| **Spotify Playlist Downloader** | ❌ (Cannot parse Spotify links) | ✅ Auto-resolves track details via Spotify Web API & downloads matches |
-| **Interactive Time Clipping** | ❌ (Full video download only) | ✅ Bidirectional range slider with SponsorBlock & Chapter overlays |
-| **Desktop Architecture** | 🐢 Slow Python GUI wrappers | ⚡ Ultra-fast Rust Tauri window with embedded FastAPI sidecar |
-| **Theme Customization** | ❌ Static default themes | ✅ Multiple vintage & modern glassmorphic themes (Forest, Makara, Night Blue, etc.) |
-| **SponsorBlock Integration** | ❌ | ✅ Auto-detects & skips sponsor segments |
-| **403 Client Fallback** | ❌ | ✅ Automatic TV Client signature bypass fallback |
-| **Parallel Task Executor** | ❌ | ✅ Thread-safe multi-worker concurrent download queue |
+| **Spotify Playlist Downloader** | ❌ (Cannot parse Spotify links) | ✅ Dual-Engine (API + Embed Scraper) zero-config playlist resolver |
+| **Smart Clipboard Listener** | ❌ | ✅ Auto-detects media URLs on focus with privacy whitelist regex |
+| **Synced LRCLIB Lyrics** | ❌ | ✅ Queries LRCLIB & embeds `.lrc` timestamped lyrics into MP3/FLAC |
+| **Zero-CPU Task Scheduler** | ❌ | ✅ Event-driven `threading.Condition` delay waiting (Zero CPU overhead) |
+| **OS Cookie Detector** | ❌ | ✅ Auto-detects Chrome, Firefox, Edge, Brave, Opera for age-restricted videos |
+| **Chrome / Edge Extension** | ❌ | ✅ Manifest V3 companion with 1-click & right-click context menu |
 
 ---
 

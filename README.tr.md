@@ -1,4 +1,4 @@
-# yt-dlp Downloader Pro
+# 📼 Makara Pro — Yeni Nesil Medya & Spotify İndirici
 
 <p align="center">
   <a href="README.md">🇺🇸 English</a> &nbsp;·&nbsp;
@@ -12,7 +12,9 @@
 [![Android CI](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml)
 [![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/yt-dlp-downloader-pro/stargazers)
 
-> **Rust Tauri**, **React/Vite** ve gömülü **FastAPI (Python)** arka uç mimarisiyle geliştirilmiş, cam derinlikli (glassmorphic) şık arayüze sahip premium video ve ses indirme yöneticisi. Spotify çalma listesi çözümlenmesi ve toplu indirilmesi, SponsorBlock ve video bölümleri üst katmanlı etkileşimli zaman kırpma slider'ı, özel renk temaları ve bağımsız kurulum paketleri sunar.
+> **Makara Pro** (Eski adıyla *yt-dlp Downloader Pro*); **Rust Tauri**, **React/Vite**, **yt-dlp** ve gömülü **FastAPI (Python 3.13)** arka uç mimarisiyle geliştirilmiş, cam derinlikli (glassmorphic) şık arayüze sahip premium video, ses ve Spotify medya yöneticisidir.
+> 
+> Öne çıkan sistemleri arasında **Sıfır-Kurulum Spotify Playlist Çözücüsü**, **Akıllı Pano Takipçisi**, **LRCLIB Zaman Senkronlu Şarkı Sözleri**, **Sıfır-CPU Gece Zamanlayıcısı**, **Sistem Tarayıcı Çerez Algılayıcısı** ve **Chrome / Edge Eklentisi** yer alır.
 
 ---
 
@@ -20,23 +22,22 @@
 
 | Platform | Format | Yayın Paketi |
 | :--- | :--- | :--- |
-| **🖥️ Windows** | Kurulumcu (Önerilen) | [📥 Setup.exe İndir (v2.0.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.0.0-setup.exe) |
-| **🖥️ Windows** | MSI Paketi | [📥 Package.msi İndir (v2.0.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.0.0.msi) |
+| **🖥️ Windows** | Kurulumcu (Önerilen) | [📥 Setup.exe İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
+| **🖥️ Windows** | MSI Paketi | [📥 Package.msi İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
 | **📱 Android** | APK (Android 8.0+) | [📥 Uygulama APK İndir](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk) |
 
 ---
 
 ## 🚀 Öne Çıkan Özellikler
 
-| Özellik | Diğer İndiriciler | yt-dlp Downloader Pro |
+| Özellik | Diğer İndiriciler | Makara Pro |
 | :--- | :--- | :--- |
-| **Spotify Playlist İndirme** | ❌ (Spotify linklerini çözemez) | ✅ Spotify API ile şarkıları otomatik çözer ve YouTube'dan indirir |
-| **Etkileşimli Zaman Kırpma** | ❌ (Yalnızca tam video) | ✅ SponsorBlock ve Bölüm katmanlı çift tutamaçlı slider |
-| **Masaüstü Mimarisi** | 🐢 Yavaş Python GUI sarmalayıcıları | ⚡ Gömülü FastAPI servisli ultra hızlı Rust Tauri penceresi |
-| **Tema Özelleştirme** | ❌ Sabit temalar | ✅ Çoklu vintage ve modern cam derinlikli temalar (Forest, Makara, Night Blue vb.) |
-| **SponsorBlock Entegrasyonu** | ❌ | ✅ Reklam ve sponsor bölümlerini otomatik atlar ve keser |
-| **403 Hata Bypass** | ❌ | ✅ TV İstemcisi yedek imza mekanizması |
-| **Paralel Kuyruk Yöneticisi** | ❌ | ✅ Thread-safe çoklu iş parçacıklı eş zamanlı indirme kuyruğu |
+| **Spotify Playlist İndirme** | ❌ (Spotify linklerini çözemez) | ✅ Çift Motorlu (API + Embed Scraper) sıfır ayarlı playlist çözücü |
+| **Akıllı Pano Takibi** | ❌ | ✅ Medya linklerini odaklanınca otomatik algılar (Gizlilik filtreli) |
+| **Senkronize Şarkı Sözleri** | ❌ | ✅ LRCLIB'den `.lrc` zamanlı sözleri MP3/FLAC içine otomatik gömer |
+| **Sıfır-CPU Gece Zamanlayıcı** | ❌ | ✅ `threading.Condition` ile 0% CPU yüküyle saatli indirme |
+| **Tarayıcı Çerez İçe Aktarımı** | ❌ | ✅ Chrome, Firefox, Edge, Brave çerezleriyle +18/Katıl videolarını indirir |
+| **Chrome / Edge Eklentisi** | ❌ | ✅ Tek tıkla ve sağ tıkla masaüstü uygulamasına direkt indirme gönderir |
 
 ---
 
