@@ -1,9 +1,10 @@
-# 📼 Makara Pro — Yeni Nesil Medya & Spotify İndirici
+# 📼 Makara Pro — Gelişmiş Medya & Spotify İndirici (yt-dlp & Tauri Gücüyle)
 
 <p align="center">
   <a href="README.md">🇺🇸 English</a> &nbsp;·&nbsp;
   <b>🇹🇷 Türkçe</b> &nbsp;·&nbsp;
-  <a href="README.es.md">🇪🇸 Español</a>
+  <a href="PRIVACY.md">🔒 Gizlilik Politikası</a> &nbsp;·&nbsp;
+  <a href="TERMS.md">⚖️ Kullanım Şartları</a>
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -12,205 +13,68 @@
 [![Android CI](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml/badge.svg)](https://github.com/BayNuman/yt-dlp-downloader-pro/actions/workflows/android-ci.yml)
 [![Stars](https://img.shields.io/github/stars/BayNuman/yt-dlp-downloader-pro?style=social)](https://github.com/BayNuman/yt-dlp-downloader-pro/stargazers)
 
-> **Makara Pro** (Eski adıyla *yt-dlp Downloader Pro*); **Rust Tauri**, **React/Vite**, **yt-dlp** ve gömülü **FastAPI (Python 3.13)** arka uç mimarisiyle geliştirilmiş, cam derinlikli (glassmorphic) şık arayüze sahip premium video, ses ve Spotify medya yöneticisidir.
+> **Makara Pro** (resmi deposu `yt-dlp-downloader-pro` adıyla sunulmaktadır); **Rust Tauri**, **React/Vite**, **yt-dlp** ve gömülü **FastAPI (Python 3.13)** arka uç mimarisiyle geliştirilmiş, cam derinlikli (glassmorphic) şık arayüze sahip yüksek performanslı bir medya yöneticisidir.
 > 
-> Öne çıkan sistemleri arasında **Sıfır-Kurulum Spotify Playlist Çözücüsü**, **Akıllı Pano Takipçisi**, **LRCLIB Zaman Senkronlu Şarkı Sözleri**, **Sıfır-CPU Gece Zamanlayıcısı**, **Sistem Tarayıcı Çerez Algılayıcısı** ve **Chrome / Edge Eklentisi** yer alır.
+> Tamamen yerel çalışma, uykuda bekleyen event-driven zamanlayıcı ve ayrıştırılmış modüler mimari için tasarlanmıştır.
 
 ---
 
 ## 📥 Hızlı İndirme Linkleri
 
-| Platform | Format | Yayın Paketi |
+| Platform | Paket Türü | Yayın Paketi |
 | :--- | :--- | :--- |
 | **🖥️ Windows** | Kurulumcu (Önerilen) | [📥 Setup.exe İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0-setup.exe) |
 | **🖥️ Windows** | MSI Paketi | [📥 Package.msi İndir (v2.2.0)](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.2.0.msi) |
 | **📱 Android** | APK (Android 8.0+) | [📥 Uygulama APK İndir](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk) |
 
----
-
-## 🚀 Öne Çıkan Özellikler
-
-| Özellik | Diğer İndiriciler | Makara Pro |
-| :--- | :--- | :--- |
-| **Spotify Playlist İndirme** | ❌ (Spotify linklerini çözemez) | ✅ Çift Motorlu (API + Embed Scraper) sıfır ayarlı playlist çözücü |
-| **Akıllı Pano Takibi** | ❌ | ✅ Medya linklerini odaklanınca otomatik algılar (Gizlilik filtreli) |
-| **Senkronize Şarkı Sözleri** | ❌ | ✅ LRCLIB'den `.lrc` zamanlı sözleri MP3/FLAC içine otomatik gömer |
-| **Sıfır-CPU Gece Zamanlayıcı** | ❌ | ✅ `threading.Condition` ile 0% CPU yüküyle saatli indirme |
-| **Tarayıcı Çerez İçe Aktarımı** | ❌ | ✅ Chrome, Firefox, Edge, Brave çerezleriyle +18/Katıl videolarını indirir |
-| **Chrome / Edge Eklentisi** | ❌ | ✅ Tek tıkla ve sağ tıkla masaüstü uygulamasına direkt indirme gönderir |
+> [!NOTE]
+> **Gömülü Çalışma Zamanı (Bundled Dependencies):** Uygulama paketleri içerisinde Python sidecar servisi, `yt-dlp` çekirdeği ve `FFmpeg` ikili dosyaları paketlenmiş olarak gelir. Sisteminize ayrıca Python veya FFmpeg kurmanız gerekmez.
 
 ---
 
-## 📸 Masaüstü Ekran Görüntüleri
+## 🛡️ Windows SmartScreen ve Güvenlik Doğrulaması
 
-<table align="center">
-<tr>
-<td align="center"><img src="assets/screenshots/desktop_forest.png" alt="Windows — Forest Teması" width="450"/></td>
-<td align="center"><img src="assets/screenshots/desktop_makara.png" alt="Windows — Makara Vintage Dark Teması" width="450"/></td>
-</tr>
-<tr>
-<td align="center"><em>Forest (Midnight Green) Teması</em></td>
-<td align="center"><em>Makara (Vintage Dark) Teması</em></td>
-</tr>
-<tr>
-<td align="center" colspan="2"><img src="assets/screenshots/desktop_night_blue.png" alt="Windows — Night Blue Teması" width="450"/></td>
-</tr>
-<tr>
-<td align="center" colspan="2"><em>Night Blue (Ocean) Teması</em></td>
-</tr>
-</table>
+Makara Pro, açık kaynaklı ve ücretsiz bir proje olduğu için ticari EV Kod İmzalama Sertifikası kullanılmamaktadır. Bu nedenle Windows Defender / SmartScreen ilk çalıştırmada *"Bilinmeyen Yayıncı (Unknown Publisher)"* uyarısı verebilir.
 
----
+### SmartScreen Uyarısını Geçme:
+1. Ekrana gelen Windows Defender penceresinde **"Ek Bilgi (More Info)"** seçeneğine tıklayın.
+2. Açılan alt kısımdan **"Yine de Çalıştır (Run Anyway)"** butonuna basın.
 
-## 📱 Android Ekran Görüntüleri
-
-<table>
-<tr>
-<td><img src="assets/screenshots/android_dark.jpg" alt="Android — İndir" width="160"/></td>
-<td><img src="assets/screenshots/android_queue.png" alt="Android — Kuyruk" width="160"/></td>
-<td><img src="assets/screenshots/android_history.png" alt="Android — Geçmiş" width="160"/></td>
-<td><img src="assets/screenshots/android_settings.png" alt="Android — Ayarlar" width="160"/></td>
-</tr>
-<tr>
-<td align="center"><em>İndirme Ekranı</em></td>
-<td align="center"><em>İndirme Kuyruğu</em></td>
-<td align="center"><em>Geçmiş</em></td>
-<td align="center"><em>Ayarlar</em></td>
-</tr>
-</table>
-
----
-
-## 📦 Kurulum ve Çalıştırma
-
-### 🖥️ Windows Kurulumu
-1. **[yt-dlp-downloader-pro-v2.0.0-setup.exe](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/yt-dlp-downloader-pro-v2.0.0-setup.exe)** dosyasını indirin.
-2. Kurulum programını çift tıklayıp sihirbazı tamamlayın (~20 saniye).
-3. Paket tamamen bağımsızdır; Python arka uç servisi, FFmpeg ve FFprobe içine gömülüdür.
-
-### 📱 Android Kurulumu
-1. **[app-release.apk](https://github.com/BayNuman/yt-dlp-downloader-pro/releases/latest/download/app-release.apk)** dosyasını telefonunuza indirin.
-2. Güvenlik ayarlarında **Bilinmeyen Kaynaklardan Yükleme** iznini verin.
-3. APK dosyasını açıp **Yükle** butonuna dokunun.
-
----
-
-## 🛠️ Kaynak Koddan Derleme
-
-### Gereksinimler
-- **Node.js** (v18+) ve **npm**
-- **Rust** ve **Cargo** (son kararlı sürüm)
-- **Python** (v3.10+)
-
-### Masaüstü Derleme (Tauri + FastAPI)
-1. **Depoyu klonlayın:**
-   ```bash
-   git clone https://github.com/BayNuman/yt-dlp-downloader-pro.git
-   cd yt-dlp-downloader-pro
-   ```
-2. **Python sanal ortamı ve bağımlılıklarını kurun:**
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-3. **Python Arka Uç Servisini Derleyin:**
-   ```bash
-   python build_sidecar.py
-   ```
-4. **Ön Yüz Bağımlılıklarını Yükleyin ve Geliştirici Modunu Başlatın:**
-   ```bash
-   cd frontend
-   npm install
-   npx @tauri-apps/cli dev
-   ```
-5. **Kurulum Paketini Üretin (`.exe` / `.msi`):**
-   ```bash
-   npx @tauri-apps/cli build
-   ```
-
----
-
-## 🏗️ Proje Mimarisi
-
-```text
-yt-dlp-downloader-pro/
-│
-├── 🖥️ Masaüstü Ön Yüz (React + TypeScript + Vite + Tailwind CSS)
-│   ├── src/
-│   │   ├── components/      # Cam görünüm paneller (Url, Preview, Queue, Progress, Advanced)
-│   │   ├── store/           # Zustand ile global durum yönetimi
-│   │   ├── hooks/           # Canlı WebSocket akış hook'u
-│   │   └── i18n/            # Çoklu dil desteği (EN, TR, ES)
-│   └── src-tauri/           # Rust Tauri Penceresi & Sidecar Süreç Yöneticisi
-│
-├── ⚙️ Masaüstü Arka Yüz (FastAPI + Python 3.13)
-│   ├── server/              # REST ve WebSocket API uç noktaları
-│   ├── core/                # Görev yöneticisi, yt-dlp motoru, FFmpeg ve SponsorBlock
-│   └── build_sidecar.py     # PyInstaller bağımsız sidecar derleyicisi
-│
-└── 📱 Mobil Uygulama (Android - Kotlin + Jetpack Compose)
-    └── android/             # Ön plan servisi ve yt-dlp çalıştırıcılı Android uygulaması
+### Dosya Doğrulaması (SHA-256 Checksum)
+İndirdiğiniz kurulum dosyasının bütünlüğünü PowerShell üzerinden doğrulayabilirsiniz:
+```powershell
+Get-FileHash -Algorithm SHA256 .\yt-dlp-downloader-pro-v2.2.0-setup.exe
 ```
 
 ---
 
-## 🌍 Desteklenen Platformlar
+## 🚀 Öne Çıkan Teknik Özellikler
 
-`yt-dlp` altyapısı sayesinde **1000'den fazla video ve müzik platformu** desteklenmektedir:
-
-YouTube • Spotify (YouTube araması üzerinden) • YouTube Music • Vimeo • SoundCloud • Twitter/X • Instagram • TikTok • Facebook • Dailymotion • Twitch • Reddit • Bandcamp • ve daha fazlası...
-
----
-
-## 🗺️ Yol Haritası
-
-- [ ] macOS masaüstü desteği
-- [ ] Android zaman aralığı kırpma paneli (slider + dönüştürme profilleri)
-- [ ] Tarayıcı eklentisi (tek tıkla entegrasyon)
-- [ ] Zamanlanmış indirmeler (belirli bir saate kurma sayacı)
-- [ ] Plex / Jellyfin medya kütüphanesi otomatik etiketleme entegrasyonu
-- [ ] Küçük resim kare şerit (filmstrip) slider'ı
+| Özellik | Diğer İndiriciler | Makara Pro | Teknik Uygulama Mimarisi |
+| :--- | :--- | :--- | :--- |
+| **Spotify Çalma Listesi Çözümleme** | ❌ (Çözümleyemez) | ✅ Çift Motorlu Çözücü | Kamu Gömdü Meta Çözücü + Web API Yedekleme |
+| **Görev Zamanlayıcı** | 🐢 CPU Yoran Döngüler | ⚡ Event-Driven Uykuda Bekleme | `threading.Condition` kernel sleep (Sıfır polling yükü) |
+| **Oturum Odaklı İçerik İndirme** | ❌ | ✅ Yerel Oturum Kimlik Doğrulama | Yerel tarayıcı çerez içe aktarımı (`--cookies-from-browser`) |
+| **Senkronize Şarkı Sözleri** | ❌ | ✅ LRCLIB Entegrasyonu | Zamanlı sözler çekilir ve MP3 (`USLT`) / FLAC etiketlerine gömülür |
+| **Pano Otomatik Algılama** | ❌ | ✅ Gizlilik Odaklı Filtre | Yalnızca medya URL regex eşleşmelerini okuyan pano takipçisi |
+| **Tarayıcı Eklentisi** | ❌ | ✅ Manifest V3 Companion | Arka plan servisi üzerinden yerel REST (`127.0.0.1:8765`) iletişimi |
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 🔒 Gizlilik ve Veri Güvenliği
 
-Katkılarınızı bekliyoruz!
-1. [Katkı Kılavuzumuzu](CONTRIBUTING.md) inceleyin.
-2. Depoyu forklayın, yeni bir özellik dalı açın ve Pull Request gönderin.
-
----
-
-## ⚖️ Yasal Uyarı
-
-Bu yazılım [yt-dlp](https://github.com/yt-dlp/yt-dlp) için geliştirilmiş bir GUI arayüz istemcisidir. Kullanıcılar, indirme yaptıkları platformların hizmet şartlarına uymaktan tamamen kendileri sorumludur.
+Makara Pro **%100 yerel olarak bilgisayarınızda çalışır**.
+- Telemetri, kullanım analitiği veya uzak sunucu takibi içermez.
+- Tarayıcı çerezleri yalnızca yerel bilgisayarınızda okunur; üçüncü şahıslara veya geliştirici sunucularına iletilmez.
+- Detaylı [Gizlilik Politikası (PRIVACY.md)](PRIVACY.md) ve [Kullanım Şartlarını (TERMS.md)](TERMS.md) inceleyebilirsiniz.
 
 ---
 
-## 📄 Lisans
+## 📸 Masaüstü Arayüzü
 
-MIT Lisansı ile dağıtılmaktadır. Detaylar için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
-
----
-
-## 💡 Yapılması ve Kaçınılması Gerekenler (Dos & Don'ts)
-
-| Yapılması Gerekenler | Kaçınılması Gerekenler |
-| :--- | :--- |
-| **Göreceli yollar kullanın** (repo içi `./assets/...` gibi) resimler ve kısayollar için. | **Mutlak yollar kullanmaktan kaçının** (`C:/Users/isim/...` gibi yollar diğer geliştiricilerde çalışmaz). |
-| **Kod bloklarında dili tam belirtin** (örneğin ` ```bash `, ` ```python `) böylece kod renklendirmesi düzgün çalışır. | **Dili belirtilmemiş** veya boş bırakılmış ` ``` ` blokları kullanmayın. |
-| **Tablolar ve emojiler kullanın** metinleri bölmek ve bilişsel yükü en aza indirmek için. | **Düz yazılardan oluşan devasa metin blokları yazmayın**; bu okuma yorgunluğu yaratır. |
-| **Kurulum talimatlarını güncel tutun** ve yayınlamadan önce komutları yerel terminalde test edin. | **Eski veya eksik bağımlılık talimatları bırakmayın**, bu durum Geliştirici Deneyimini (DX) olumsuz etkiler. |
-
----
-
-<div align="center">
-
-[BayNuman](https://github.com/BayNuman) tarafından ❤️ ile yapılmıştır
-
-[**🧡 Patreon'da Destek Olun**](https://patreon.com/BayNuman?utm_medium=unknown&utm_source=join_link&utm_campaign=creatorshare_creator&utm_content=copyLink)
-
-Bu projeyi yararlı bulduysanız, diğer geliştiricilerin de keşfetmesi için bir ⭐ vermeyi unutmayın!
-
-</div>
+<table align="center">
+<tr>
+<td align="center"><img src="assets/screenshots/desktop_forest.png" alt="Makara Pro — Forest Theme" width="450"/><br><sub>Forest Glass Teması</sub></td>
+<td align="center"><img src="assets/screenshots/desktop_makara.png" alt="Makara Pro — Vintage Dark Theme" width="450"/><br><sub>Makara Vintage Dark Teması</sub></td>
+</tr>
+</table>
