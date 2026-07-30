@@ -1,28 +1,13 @@
-# Security Policy
+# Security Policy — Makara Pro
 
-## Supported Versions
+## Reporting a Security Vulnerability
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | ✅ Active support  |
+If you discover a security vulnerability within Makara Pro, please do **NOT** open a public issue. Instead, report it directly to the maintainers via security advisory or email.
 
-## Reporting a Vulnerability
+---
 
-If you discover a security vulnerability in **yt-dlp Downloader Pro**, please follow responsible disclosure:
+## Security Model & Sandboxing
 
-1. **Do NOT** open a public GitHub issue for security vulnerabilities.
-2. Send a detailed report to the maintainer via GitHub's private [Security Advisory](../../security/advisories/new) feature.
-3. Include the following in your report:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if any)
-
-We will acknowledge your report within **48 hours** and aim to release a patch within **7 days** for critical issues.
-
-## Security Considerations
-
-- This application uses **yt-dlp** for downloading — always use the latest version to avoid known vulnerabilities.
-- The desktop application bundles **ffmpeg** binaries — these are downloaded from official sources during build.
-- The Android app requests only the **minimum required permissions** (storage read/write on Android < 10, notifications on Android 13+).
-- No user data, URLs, or download history is transmitted to external servers.
+1. **Local Loopback Only (`127.0.0.1:8765`):** The embedded FastAPI sidecar process binds exclusively to `127.0.0.1` and is never exposed to external networks.
+2. **CORS Validation:** Cross-Origin Resource Sharing is restricted strictly to local Tauri origin (`tauri://localhost`) and browser extensions (`chrome-extension://*`, `moz-extension://*`).
+3. **Session Cookies Protection:** Local browser cookie imports are processed in read-only mode in memory and passed directly to local execution processes. No credentials or session tokens are logged to disk or sent to external endpoints.
