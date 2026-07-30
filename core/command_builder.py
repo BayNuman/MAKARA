@@ -203,10 +203,15 @@ def build_command(item, output_dir: str) -> list[str]:
         cmd.extend(["--write-thumbnail", "--convert-thumbnails", "jpg"])
         if mode == "Audio":
             cmd.append("--embed-thumbnail")
+    sub_langs = str(safe_get(item, "sub_langs", "tr,en")).strip()
+    if not sub_langs:
+        sub_langs = "tr,en"
     if safe_get(item, "subs"):
-        cmd.extend(["--write-subs", "--sub-langs", "all,-live_chat"])
+        cmd.extend(["--write-subs", "--sub-langs", sub_langs, "--convert-subs", "srt"])
     if safe_get(item, "auto_subs"):
-        cmd.append("--write-auto-subs")
+        cmd.extend(["--write-auto-subs", "--sub-langs", sub_langs, "--convert-subs", "srt"])
+    if (safe_get(item, "subs") or safe_get(item, "auto_subs")) and safe_get(item, "embed_subs", True):
+        cmd.append("--embed-subs")
     if safe_get(item, "restrict_names") or (folder_org and folder_org != "None"):
         cmd.append("--restrict-filenames")
 

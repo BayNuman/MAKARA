@@ -148,3 +148,9 @@ async def select_directory():
 
     folder = await asyncio.to_thread(ask_dir)
     return {"directory": folder}
+
+@router.get("/browsers")
+async def get_installed_browser_list():
+    """Scans host OS to detect installed web browsers for cookie authentication."""
+    from core.cookies import get_installed_browsers
+    return await asyncio.to_thread(get_installed_browsers)

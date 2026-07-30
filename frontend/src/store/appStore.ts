@@ -37,6 +37,8 @@ export interface AppPreferences {
   sponsorblock_enabled: boolean;
   browser_cookies: string;
   speed_limit: string | null;
+  sub_langs: string;
+  embed_subs: boolean;
   metadata_flag: boolean;
   thumbnail_flag: boolean;
   subtitle_flag: boolean;

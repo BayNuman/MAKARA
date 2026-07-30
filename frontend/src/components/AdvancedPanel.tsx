@@ -369,10 +369,46 @@ export const AdvancedPanel: React.FC = () => {
                   >
                     <option value="disabled" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_disabled')}</option>
                     <option value="chrome" className="bg-[var(--bg-elevated)]">Google Chrome</option>
-                    <option value="firefox" className="bg-[var(--bg-elevated)]">Firefox</option>
+                    <option value="firefox" className="bg-[var(--bg-elevated)]">Mozilla Firefox</option>
                     <option value="edge" className="bg-[var(--bg-elevated)]">Microsoft Edge</option>
-                    <option value="safari" className="bg-[var(--bg-elevated)]">Safari</option>
+                    <option value="brave" className="bg-[var(--bg-elevated)]">Brave Browser</option>
+                    <option value="opera" className="bg-[var(--bg-elevated)]">Opera</option>
+                    <option value="vivaldi" className="bg-[var(--bg-elevated)]">Vivaldi</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Speed Limiter & Subtitle Configs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[var(--hairline)] pt-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
+                    {currentLang === 'tr' ? 'Bant Genişliği Hız Limitörü' : 'Bandwidth Speed Limiter'}
+                  </label>
+                  <select
+                    value={preferences.speed_limit || 'unlimited'}
+                    onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
+                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
+                  >
+                    <option value="unlimited" className="bg-[var(--bg-elevated)]">{currentLang === 'tr' ? 'Sınırsız (Maksimum Hız)' : 'Unlimited (Max Speed)'}</option>
+                    <option value="1M" className="bg-[var(--bg-elevated)]">1 MB/s (Oyun & Yayın Dostu)</option>
+                    <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
+                    <option value="5M" className="bg-[var(--bg-elevated)]">5 MB/s (Dengeli Limit)</option>
+                    <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
+                    <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
+                    {currentLang === 'tr' ? 'Altyazı Dilleri (Virgülle Ayrılmış)' : 'Subtitle Languages (Comma Separated)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={preferences.sub_langs || 'tr,en'}
+                    onChange={(e) => handleValueChange('sub_langs', e.target.value)}
+                    placeholder="tr,en,es,de,all"
+                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-mono outline-none text-[var(--ink)]"
+                  />
                 </div>
               </div>
 

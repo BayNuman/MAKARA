@@ -15,6 +15,8 @@ class AppPreferencesModel(BaseModel):
     sponsorblock_enabled: bool
     browser_cookies: str
     speed_limit: Optional[str]
+    sub_langs: str = "tr,en"
+    embed_subs: bool = True
     metadata_flag: bool
     thumbnail_flag: bool
     subtitle_flag: bool
@@ -43,6 +45,8 @@ class AppPreferencesPatchModel(BaseModel):
     sponsorblock_enabled: Optional[bool] = None
     browser_cookies: Optional[str] = None
     speed_limit: Optional[str] = None
+    sub_langs: Optional[str] = None
+    embed_subs: Optional[bool] = None
     metadata_flag: Optional[bool] = None
     thumbnail_flag: Optional[bool] = None
     subtitle_flag: Optional[bool] = None
@@ -77,6 +81,9 @@ class AddTaskRequest(BaseModel):
     profile: Optional[str] = "best"
     clip_start: Optional[str] = "00:00"
     clip_end: Optional[str] = "00:00"
+    scheduled_at: Optional[str] = None
+    sub_langs: Optional[str] = "tr,en"
+    embed_subs: Optional[bool] = True
     clips: Optional[List[ClipRange]] = None
     preset_name: Optional[str] = None
     settings: Optional[Dict] = None
@@ -95,6 +102,9 @@ class DownloadTaskResponse(BaseModel):
     clip_enabled: bool
     clip_start: str
     clip_end: str
+    scheduled_at: Optional[str] = None
+    sub_langs: Optional[str] = "tr,en"
+    embed_subs: Optional[bool] = True
     percent: float
     speed: str
     eta: str

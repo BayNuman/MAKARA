@@ -36,6 +36,9 @@ class DownloadTask:
     thumbnail_flag: bool = True
     subs: bool = False
     auto_subs: bool = False
+    sub_langs: str = "tr,en"
+    embed_subs: bool = True
+    scheduled_at: Optional[str] = None
     restrict_names: bool = False
     sponsorblock: bool = False
     playlist_items: str = ""
@@ -109,6 +112,9 @@ class DownloadTask:
             "clip_enabled": self.clip_enabled,
             "clip_start": self.clip_start,
             "clip_end": self.clip_end,
+            "scheduled_at": self.scheduled_at,
+            "sub_langs": self.sub_langs,
+            "embed_subs": self.embed_subs,
             "percent": self.percent,
             "speed": self.speed,
             "eta": self.eta,
@@ -200,6 +206,8 @@ class AppPreferences:
     thumbnail_flag: bool = True
     subtitle_flag: bool = False
     auto_subtitle_flag: bool = False
+    sub_langs: str = "tr,en"
+    embed_subs: bool = True
     restrict_filenames: bool = False
     keep_video_flag: bool = False
     embed_chapters: bool = False
