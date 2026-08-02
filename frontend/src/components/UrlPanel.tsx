@@ -269,15 +269,21 @@ export const UrlPanel: React.FC = () => {
                 <button
                   onClick={handleManualFetch}
                   disabled={metadataState.loading || !url.trim()}
-                  className="flex items-center justify-center gap-1.5 rounded-[var(--radius)] bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-[var(--accent-ink)] hover:bg-[var(--accent-deep)] disabled:pointer-events-none disabled:opacity-50 transition-all font-mono"
+                  className="flex items-center gap-2 rounded-[var(--radius)] bg-[var(--accent)] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[var(--accent-ink)] hover:bg-[var(--accent-deep)] active:scale-95 disabled:opacity-50 transition-all flex-none font-mono"
                 >
                   {metadataState.loading ? (
                     <>
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>{getTranslation(currentLang, 'lbl_fetching')}</span>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>{getTranslation(currentLang, 'btn_querying')}</span>
                     </>
                   ) : (
-                    <span>{getTranslation(currentLang, 'lbl_query_btn')}</span>
+                    <span>
+                      {url.includes('list=') 
+                        ? '🎥 Oynatma Listesi Çözümle ->' 
+                        : url.includes('open.spotify.com')
+                          ? getTranslation(currentLang, 'btn_spotify_query') 
+                          : getTranslation(currentLang, 'lbl_query_btn')}
+                    </span>
                   )}
                 </button>
               )}
@@ -343,10 +349,14 @@ export const UrlPanel: React.FC = () => {
             <CheckCircle2 className="h-5 w-5 text-[var(--success)]" />
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-[var(--success)]">
-                {getTranslation(currentLang, 'lbl_video_resolved')}
+                {metadataState.data.playlist_entries && metadataState.data.playlist_entries.length > 0 
+                  ? `🎥 Oynatma Listesi Başarıyla Çözümlendi (${metadataState.data.playlist_entries.length} Video)` 
+                  : getTranslation(currentLang, 'lbl_video_resolved')}
               </span>
               <span className="text-[11px] text-[var(--ink-dim)]">
-                {getTranslation(currentLang, 'lbl_video_resolved_detail', { title: metadataState.data.title })}
+                {metadataState.data.playlist_entries && metadataState.data.playlist_entries.length > 0 
+                  ? `'${metadataState.data.title}' listesindeki videolar aşağıda sıralanmıştır. İndirmek istediklerinizi seçip ekleyebilirsiniz.` 
+                  : getTranslation(currentLang, 'lbl_video_resolved_detail', { title: metadataState.data.title })}
               </span>
             </div>
           </div>

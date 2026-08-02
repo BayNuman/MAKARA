@@ -69,7 +69,7 @@ export const PreviewPanel: React.FC = () => {
     }
   }, [data]);
 
-  if (!data) return null;
+  if (!data || (data.playlist_entries && data.playlist_entries.length > 0)) return null;
 
   const durationSec = Math.floor(data.duration || 0);
 
