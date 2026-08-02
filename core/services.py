@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import re
 import hashlib
 import urllib.request
 from pathlib import Path
@@ -20,16 +21,20 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         'no_warnings': True,
     }
 
-    if 'list=' in url:
+    target_url = url
+    playlist_match = re.search(r'[?&]list=([a-zA-Z0-9_-]+)', url)
+    if playlist_match:
+        playlist_id = playlist_match.group(1)
+        target_url = f"https://www.youtube.com/playlist?list={playlist_id}"
         ydl_opts['extract_flat'] = 'in_playlist'
-    
+
     if cookies_file:
         ydl_opts['cookiefile'] = cookies_file
     elif browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none"):
         ydl_opts['cookiesfrombrowser'] = (browser_cookies,)
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
+        info = ydl.extract_info(target_url, download=False)
 
     if not info:
         raise ValueError("No info extracted")
@@ -75,9 +80,14 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         info["channel_name"] = ch_name
 
     playlist_entries = []
-    if info.get("entries"):
-        for entry in info["entries"]:
-            if not entry:
+    if info.get("entries") is not None:
+        try:
+            raw_entries = list(info["entries"])
+        except Exception:
+            raw_entries = []
+            
+        for entry in raw_entries:
+            if not entry or not isinstance(entry, dict):
                 continue
             v_id = entry.get("id")
             v_title = entry.get("title") or (f"Video {v_id}" if v_id else "Untitled Video")
@@ -93,6 +103,9 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
                 "uploader": v_uploader,
                 "thumbnail": v_thumb
             })
+
+    # Clean non-serializable generator from raw_info before returning
+    info.pop("entries", None)
 
     return {
         "url": url,
