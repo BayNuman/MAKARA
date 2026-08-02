@@ -24,7 +24,22 @@ export const UrlPanel: React.FC = () => {
   const [spotifyLoading, setSpotifyLoading] = useState(false);
   const [selectedTracks, setSelectedTracks] = useState<Record<number, boolean>>({});
 
+  // YouTube Playlist entries local selection state
+  const [selectedYtEntries, setSelectedYtEntries] = useState<Record<number, boolean>>({});
+
   const currentLang = preferences?.current_lang || 'en';
+
+  useEffect(() => {
+    if (metadataState.data?.playlist_entries && metadataState.data.playlist_entries.length > 0) {
+      const initial: Record<number, boolean> = {};
+      metadataState.data.playlist_entries.forEach((_: any, idx: number) => {
+        initial[idx] = true;
+      });
+      setSelectedYtEntries(initial);
+    } else {
+      setSelectedYtEntries({});
+    }
+  }, [metadataState.data?.playlist_entries]);
 
   // Sync output directory from global preferences state
   useEffect(() => {
@@ -165,6 +180,34 @@ export const UrlPanel: React.FC = () => {
     addToast(`${addedCount} şarkı indirme kuyruğuna eklendi!`, 'success');
     // Clear list
     setSpotifyTracks([]);
+    setUrl('');
+  };
+
+  const handleAddSelectedYtToQueue = async () => {
+    const entries = metadataState.data?.playlist_entries || [];
+    const selectedList = entries.filter((_: any, idx: number) => selectedYtEntries[idx]);
+    if (selectedList.length === 0) {
+      addToast('Lütfen kuyruğa eklemek için en az bir video seçin.', 'warning');
+      return;
+    }
+
+    const settings = {
+      mode: preferences?.mode || 'Video',
+      active_profile: preferences?.active_profile || 'best'
+    };
+
+    let addedCount = 0;
+    for (const item of selectedList) {
+      try {
+        await addTask(item.url, settings);
+        addedCount++;
+      } catch (err) {
+        console.error('Failed to add playlist item to queue:', item.title, err);
+      }
+    }
+
+    addToast(`${addedCount} video indirme kuyruğuna eklendi!`, 'success');
+    clearMetadata();
     setUrl('');
   };
 
@@ -382,6 +425,90 @@ export const UrlPanel: React.FC = () => {
               </button>
               <button
                 onClick={() => setSpotifyTracks([])}
+                className="rounded-[var(--radius)] border border-[var(--hairline-strong)] px-4 py-2.5 text-xs font-semibold text-[var(--ink)] hover:border-red-500/50 hover:text-red-500 transition-all font-mono"
+              >
+                İptal Et
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* YouTube Playlist tracks selection */}
+        {metadataState.data?.playlist_entries && metadataState.data.playlist_entries.length > 0 && (
+          <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-2 animate-slide-in">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-[var(--ink)] font-mono flex items-center gap-2">
+                <span>🎥 Çalma Listesi:</span>
+                <span className="text-[var(--accent)]">{metadataState.data.playlist_entries.length} Video Yüklendi</span>
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const allSelected: Record<number, boolean> = {};
+                    metadataState.data.playlist_entries.forEach((_: any, idx: number) => {
+                      allSelected[idx] = true;
+                    });
+                    setSelectedYtEntries(allSelected);
+                  }}
+                  className="text-[10px] font-mono text-[var(--accent)] hover:underline"
+                >
+                  Tümünü Seç
+                </button>
+                <span className="text-[10px] text-[var(--ink-faint)]">|</span>
+                <button
+                  onClick={() => setSelectedYtEntries({})}
+                  className="text-[10px] font-mono text-[var(--ink-faint)] hover:text-[var(--ink)] hover:underline"
+                >
+                  Seçimleri Kaldır
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable YouTube Playlist Video List */}
+            <div className="max-h-64 overflow-y-auto border border-[var(--hairline-strong)] rounded-[var(--radius)] bg-[var(--bg-recessed)] divide-y divide-[var(--hairline)]">
+              {metadataState.data.playlist_entries.map((item: any, idx: number) => (
+                <div key={idx} className="flex items-center gap-3 p-2.5 hover:bg-[var(--bg-elevated)] transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={!!selectedYtEntries[idx]}
+                    onChange={() => {
+                      setSelectedYtEntries(prev => ({
+                        ...prev,
+                        [idx]: !prev[idx]
+                      }));
+                    }}
+                    className="h-3.5 w-3.5 rounded border-[var(--hairline-strong)] text-[var(--accent)] focus:ring-[var(--accent)] bg-[var(--bg-recessed)] cursor-pointer"
+                  />
+                  {item.thumbnail ? (
+                    <img src={item.thumbnail} alt="" className="w-12 h-7 rounded object-cover flex-none bg-[var(--bg-elevated)]" />
+                  ) : (
+                    <div className="w-12 h-7 bg-[var(--bg-elevated)] rounded flex items-center justify-center text-[var(--ink-faint)] text-[10px] flex-none">
+                      🎥
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-[var(--ink)] truncate">{item.title}</p>
+                    {item.uploader && <p className="text-[10px] text-[var(--ink-faint)] truncate">{item.uploader}</p>}
+                  </div>
+                  {item.duration > 0 && (
+                    <div className="text-[10px] font-mono text-[var(--ink-faint)] flex-none px-2">
+                      {Math.floor(item.duration / 60)}:{(Math.floor(item.duration) % 60).toString().padStart(2, '0')}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={handleAddSelectedYtToQueue}
+                className="flex-1 rounded-[var(--radius)] bg-[var(--accent)] py-2.5 text-xs font-bold uppercase tracking-widest text-[var(--accent-ink)] hover:bg-[var(--accent-deep)] active:scale-98 transition-all font-mono"
+              >
+                Seçilen {Object.values(selectedYtEntries).filter(Boolean).length} Videoyu İndirme Kuyruğuna Ekle
+              </button>
+              <button
+                onClick={() => clearMetadata()}
                 className="rounded-[var(--radius)] border border-[var(--hairline-strong)] px-4 py-2.5 text-xs font-semibold text-[var(--ink)] hover:border-red-500/50 hover:text-red-500 transition-all font-mono"
               >
                 İptal Et

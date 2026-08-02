@@ -15,9 +15,17 @@ export const AdvancedPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'video' | 'audio' | 'general'>('video');
   const [newPresetName, setNewPresetName] = useState('');
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [installedBrowsers, setInstalledBrowsers] = useState<Array<{ id: string; name: string; installed: boolean }>>([]);
 
   useEffect(() => {
     fetchPresets();
+    import('../api/client').then(({ apiClient }) => {
+      apiClient.get('/config/browsers').then((res) => {
+        if (Array.isArray(res.data)) {
+          setInstalledBrowsers(res.data);
+        }
+      }).catch((err) => console.warn('Failed to fetch installed browsers:', err));
+    });
   }, [fetchPresets]);
 
   if (!preferences) return null;
@@ -359,8 +367,9 @@ export const AdvancedPanel: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                    {getTranslation(currentLang, 'lbl_browser_cookies')}
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1 flex items-center justify-between">
+                    <span>{getTranslation(currentLang, 'lbl_browser_cookies')}</span>
+                    <span className="text-[9px] text-green-400 font-bold">✓ OS OTO-ALGILAMA</span>
                   </label>
                   <select
                     value={preferences.browser_cookies || 'disabled'}
@@ -368,47 +377,152 @@ export const AdvancedPanel: React.FC = () => {
                     className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
                   >
                     <option value="disabled" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_disabled')}</option>
-                    <option value="chrome" className="bg-[var(--bg-elevated)]">Google Chrome</option>
-                    <option value="firefox" className="bg-[var(--bg-elevated)]">Mozilla Firefox</option>
-                    <option value="edge" className="bg-[var(--bg-elevated)]">Microsoft Edge</option>
-                    <option value="brave" className="bg-[var(--bg-elevated)]">Brave Browser</option>
-                    <option value="opera" className="bg-[var(--bg-elevated)]">Opera</option>
-                    <option value="vivaldi" className="bg-[var(--bg-elevated)]">Vivaldi</option>
+                    {installedBrowsers.length > 0 ? (
+                      installedBrowsers.filter(b => b.id !== 'disabled').map(b => (
+                        <option key={b.id} value={b.id} className="bg-[var(--bg-elevated)]">
+                          {b.name} {b.installed ? ' (✓ Kurulu)' : ' (Bulunamadı)'}
+                        </option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="chrome" className="bg-[var(--bg-elevated)]">Google Chrome</option>
+                        <option value="firefox" className="bg-[var(--bg-elevated)]">Mozilla Firefox</option>
+                        <option value="edge" className="bg-[var(--bg-elevated)]">Microsoft Edge</option>
+                        <option value="brave" className="bg-[var(--bg-elevated)]">Brave Browser</option>
+                        <option value="opera" className="bg-[var(--bg-elevated)]">Opera</option>
+                        <option value="vivaldi" className="bg-[var(--bg-elevated)]">Vivaldi</option>
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
 
-              {/* Speed Limiter & Subtitle Configs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[var(--hairline)] pt-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                    {currentLang === 'tr' ? 'Bant Genişliği Hız Limitörü' : 'Bandwidth Speed Limiter'}
-                  </label>
-                  <select
-                    value={preferences.speed_limit || 'unlimited'}
-                    onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
-                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
-                  >
-                    <option value="unlimited" className="bg-[var(--bg-elevated)]">{currentLang === 'tr' ? 'Sınırsız (Maksimum Hız)' : 'Unlimited (Max Speed)'}</option>
-                    <option value="1M" className="bg-[var(--bg-elevated)]">1 MB/s (Oyun & Yayın Dostu)</option>
-                    <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
-                    <option value="5M" className="bg-[var(--bg-elevated)]">5 MB/s (Dengeli Limit)</option>
-                    <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
-                    <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
-                  </select>
+              {/* Speed Limiter */}
+              <div className="flex flex-col gap-1.5 border-t border-[var(--hairline)] pt-4">
+                <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
+                  {currentLang === 'tr' ? 'Bant Genişliği Hız Limitörü' : 'Bandwidth Speed Limiter'}
+                </label>
+                <select
+                  value={preferences.speed_limit || 'unlimited'}
+                  onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
+                  className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
+                >
+                  <option value="unlimited" className="bg-[var(--bg-elevated)]">{currentLang === 'tr' ? 'Sınırsız (Maksimum Hız)' : 'Unlimited (Max Speed)'}</option>
+                  <option value="1M" className="bg-[var(--bg-elevated)]">1 MB/s (Oyun & Yayın Dostu)</option>
+                  <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
+                  <option value="5M" className="bg-[var(--bg-elevated)]">5 MB/s (Dengeli Limit)</option>
+                  <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
+                  <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
+                </select>
+              </div>
+
+              {/* Subtitles & AI Auto-Translation Engine Control Card */}
+              <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-1 bg-[var(--bg-recessed)] p-4 rounded-[var(--radius)] border border-[var(--hairline-strong)]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono tracking-widest text-[var(--accent)] uppercase font-bold flex items-center gap-2">
+                    <span>💬 Altyazı & Otomatik Çeviri Motoru</span>
+                  </span>
+                  <span className="text-[9px] font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2 py-0.5 rounded border border-[var(--accent)]/20">
+                    AI AUTO-TRANSLATE ENGINE
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2 border-b border-[var(--hairline)]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-[var(--ink)]">Manuel Altyazılar</span>
+                      <span className="text-[10px] text-[var(--ink-faint)]">Resmi altyazıları indir</span>
+                    </div>
+                    <div 
+                      className={`toggle-sw ${preferences.subtitle_flag ? 'on' : ''}`}
+                      onClick={() => handleToggle('subtitle_flag')}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-[var(--ink)]">Otomatik AI Çeviri</span>
+                      <span className="text-[10px] text-[var(--ink-faint)]">Otomatik üretilen altyazılar</span>
+                    </div>
+                    <div 
+                      className={`toggle-sw ${preferences.auto_subtitle_flag ? 'on' : ''}`}
+                      onClick={() => handleToggle('auto_subtitle_flag')}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold text-[var(--ink)]">Videoya Göm (Soft-Sub)</span>
+                      <span className="text-[10px] text-[var(--ink-faint)]">MP4/MKV içine altyazı ekle</span>
+                    </div>
+                    <div 
+                      className={`toggle-sw ${preferences.embed_subs !== false ? 'on' : ''}`}
+                      onClick={() => handleToggle('embed_subs')}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                    {currentLang === 'tr' ? 'Altyazı Dilleri (Virgülle Ayrılmış)' : 'Subtitle Languages (Comma Separated)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={preferences.sub_langs || 'tr,en'}
-                    onChange={(e) => handleValueChange('sub_langs', e.target.value)}
-                    placeholder="tr,en,es,de,all"
-                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-mono outline-none text-[var(--ink)]"
-                  />
+                {/* Subtitle Languages Selector & One-Click Preset Pills */}
+                <div className="flex flex-col gap-2 pt-1">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase">
+                      Hedef Altyazı & Çeviri Dilleri (Virgülle Ayrılmış ISO Kodları)
+                    </label>
+                    <span className="text-[10px] font-mono text-[var(--accent)]">Seçilen: {preferences.sub_langs || 'tr,en'}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={preferences.sub_langs || 'tr,en'}
+                      onChange={(e) => handleValueChange('sub_langs', e.target.value)}
+                      placeholder="tr,en,es,de,fr,ja,ru,all"
+                      className="flex-1 rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-elevated)] px-3.5 py-2 text-xs font-mono outline-none text-[var(--ink)] focus:border-[var(--accent)]"
+                    />
+                  </div>
+
+                  {/* One-Click Language Pills */}
+                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                    <span className="text-[10px] font-mono text-[var(--ink-faint)] mr-1">Hızlı Ekle:</span>
+                    {[
+                      { code: 'tr', label: '🇹🇷 Türkçe' },
+                      { code: 'en', label: '🇬🇧 İngilizce' },
+                      { code: 'es', label: '🇪🇸 İspanyolca' },
+                      { code: 'de', label: '🇩🇪 Almanca' },
+                      { code: 'fr', label: '🇫🇷 Fransızca' },
+                      { code: 'ja', label: '🇯🇵 Japonca' },
+                      { code: 'ru', label: '🇷🇺 Rusça' },
+                      { code: 'all', label: '🌐 Tüm Diller (All)' }
+                    ].map(lang => {
+                      const currentLangs = (preferences.sub_langs || '').split(',').map(s => s.trim());
+                      const isSelected = currentLangs.includes(lang.code);
+                      return (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => {
+                            let newLangs: string[];
+                            if (lang.code === 'all') {
+                              newLangs = ['all'];
+                            } else if (isSelected) {
+                              newLangs = currentLangs.filter(c => c !== lang.code && c !== 'all');
+                              if (newLangs.length === 0) newLangs = ['tr'];
+                            } else {
+                              newLangs = [...currentLangs.filter(c => c !== 'all'), lang.code];
+                            }
+                            handleValueChange('sub_langs', newLangs.join(','));
+                          }}
+                          className={`text-[10px] font-mono px-2.5 py-1 rounded-[var(--radius)] border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)] font-bold'
+                              : 'border-[var(--hairline-strong)] bg-[var(--bg-elevated)] text-[var(--ink-faint)] hover:text-[var(--ink)]'
+                          }`}
+                        >
+                          {lang.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 

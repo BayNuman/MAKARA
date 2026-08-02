@@ -74,6 +74,26 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
     if ch_name:
         info["channel_name"] = ch_name
 
+    playlist_entries = []
+    if info.get("entries"):
+        for entry in info["entries"]:
+            if not entry:
+                continue
+            v_id = entry.get("id")
+            v_title = entry.get("title") or (f"Video {v_id}" if v_id else "Untitled Video")
+            v_dur = float(entry.get("duration") or 0.0)
+            v_uploader = entry.get("uploader") or entry.get("channel") or uploader
+            v_url = f"https://www.youtube.com/watch?v={v_id}" if v_id else entry.get("url", url)
+            v_thumb = f"https://i.ytimg.com/vi/{v_id}/hqdefault.jpg" if v_id else None
+            playlist_entries.append({
+                "id": v_id or "",
+                "title": v_title,
+                "url": v_url,
+                "duration": v_dur,
+                "uploader": v_uploader,
+                "thumbnail": v_thumb
+            })
+
     return {
         "url": url,
         "title": title,
@@ -85,6 +105,7 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         "filesize_approx": info.get("filesize_approx"),
         "channel_id": ch_id,
         "channel_name": ch_name,
+        "playlist_entries": playlist_entries,
         "raw_info": info
     }
 

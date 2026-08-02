@@ -8,7 +8,7 @@ class TestServer(unittest.TestCase):
         with TestClient(app) as client:
             response = client.get("/health")
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json(), {"status": "ok", "version": "2.0.0"})
+            self.assertEqual(response.json(), {"status": "ok", "version": "2.1.1"})
 
     def test_unauthorized_endpoints(self):
         """Verifies that API endpoints are protected and return 401 when token is missing/invalid."""
