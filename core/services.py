@@ -21,11 +21,7 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         'no_warnings': True,
     }
 
-    target_url = url
-    playlist_match = re.search(r'[?&]list=([a-zA-Z0-9_-]+)', url)
-    if playlist_match:
-        playlist_id = playlist_match.group(1)
-        target_url = f"https://www.youtube.com/playlist?list={playlist_id}"
+    if 'list=' in url:
         ydl_opts['extract_flat'] = 'in_playlist'
 
     if cookies_file:
@@ -33,11 +29,27 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
     elif browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none"):
         ydl_opts['cookiesfrombrowser'] = (browser_cookies,)
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(target_url, download=False)
+    info = None
+    # Stage 1: Try direct extraction on user's exact URL
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+    except Exception as e:
+        print(f"[Services] Direct URL metadata extraction warning: {e}")
+
+    # Stage 2: If direct extraction produced no entries and a playlist ID exists, try normalized playlist URL
+    playlist_match = re.search(r'[?&]list=([a-zA-Z0-9_-]+)', url)
+    if (not info or not info.get("entries")) and playlist_match:
+        playlist_id = playlist_match.group(1)
+        target_url = f"https://www.youtube.com/playlist?list={playlist_id}"
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(target_url, download=False)
+        except Exception as e:
+            print(f"[Services] Normalized playlist URL extraction warning: {e}")
 
     if not info:
-        raise ValueError("No info extracted")
+        raise ValueError("Oynatma listesi veya video bilgileri çekilemedi. Lütfen URL'yi kontrol edin.")
 
     title = info.get("title", "Unknown Title")
     uploader = info.get("uploader", info.get("channel", "Unknown Channel"))

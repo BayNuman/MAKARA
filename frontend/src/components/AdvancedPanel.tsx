@@ -12,7 +12,7 @@ export const AdvancedPanel: React.FC = () => {
     savePreset
   } = useAppStore();
 
-  const [activeTab, setActiveTab] = useState<'video' | 'audio' | 'general'>('video');
+  const [activeTab, setActiveTab] = useState<'video' | 'audio' | 'subtitles' | 'general'>('video');
   const [newPresetName, setNewPresetName] = useState('');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [installedBrowsers, setInstalledBrowsers] = useState<Array<{ id: string; name: string; installed: boolean }>>([]);
@@ -98,8 +98,8 @@ export const AdvancedPanel: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
           <div className="flex items-center gap-2">
             <span className="panel-idx">03</span>
-            <h2 className="text-xs font-semibold tracking-widest text-[var(--ink-dim)] uppercase font-mono">
-              {getTranslation(currentLang, 'lbl_advanced_config')}
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--ink)] font-mono">
+              {getTranslation(currentLang, 'sec_advanced_config')}
             </h2>
           </div>
 
@@ -161,7 +161,7 @@ export const AdvancedPanel: React.FC = () => {
         )}
 
         {/* Tabs navigation */}
-        <div className="flex border-b border-[var(--hairline)]">
+        <div className="flex border-b border-[var(--hairline)] flex-wrap">
           <button
             onClick={() => setActiveTab('video')}
             className={`flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-xs font-semibold transition-all font-mono uppercase tracking-wider ${
@@ -183,6 +183,17 @@ export const AdvancedPanel: React.FC = () => {
           >
             <Volume2 className="h-3.5 w-3.5" />
             <span>{getTranslation(currentLang, 'tab_audio')}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('subtitles')}
+            className={`flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-xs font-semibold transition-all font-mono uppercase tracking-wider ${
+              activeTab === 'subtitles'
+                ? 'border-[var(--accent)] text-[var(--accent)]'
+                : 'border-transparent text-[var(--ink-faint)] hover:text-[var(--ink)]'
+            }`}
+          >
+            <FileText className="h-3.5 w-3.5" />
+            <span>💬 Altyazı & Çeviri</span>
           </button>
           <button
             onClick={() => setActiveTab('general')}
@@ -272,6 +283,123 @@ export const AdvancedPanel: React.FC = () => {
                   <option value="Dengeli (192K)" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_aq_balanced')}</option>
                   <option value="Kucuk Boyut (128K)" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_aq_economy')}</option>
                 </select>
+              </div>
+            </div>
+          )}
+
+          {/* Subtitles & AI Auto-Translation Tab Content */}
+          {activeTab === 'subtitles' && (
+            <div className="flex flex-col gap-4 animate-slide-in bg-[var(--bg-recessed)] p-5 rounded-[var(--radius)] border border-[var(--hairline-strong)]">
+              <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-[var(--accent)] font-mono">
+                    💬 Altyazı & AI Otomatik Çeviri Motoru
+                  </span>
+                  <span className="text-[11px] text-[var(--ink-faint)]">
+                    Videolardan altyazı çekme, otomatik AI çevirisi yapma ve videoya (MP4/MKV) gömme ayarları.
+                  </span>
+                </div>
+                <span className="text-[9px] font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2.5 py-1 rounded border border-[var(--accent)]/20 font-bold">
+                  SUBTITLE & TRANSLATE ENGINE
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-2 border-b border-[var(--hairline)]">
+                <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-[var(--ink)]">Manuel Altyazılar</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">Resmi insan altyazılarını indir</span>
+                  </div>
+                  <div 
+                    className={`toggle-sw ${preferences.subtitle_flag ? 'on' : ''}`}
+                    onClick={() => handleToggle('subtitle_flag')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-[var(--ink)]">Otomatik AI Çeviri</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">Otomatik üretilen altyazılar</span>
+                  </div>
+                  <div 
+                    className={`toggle-sw ${preferences.auto_subtitle_flag ? 'on' : ''}`}
+                    onClick={() => handleToggle('auto_subtitle_flag')}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-[var(--ink)]">Videoya Göm (Soft-Sub)</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">MP4/MKV içine altyazı ekle</span>
+                  </div>
+                  <div 
+                    className={`toggle-sw ${preferences.embed_subs !== false ? 'on' : ''}`}
+                    onClick={() => handleToggle('embed_subs')}
+                  />
+                </div>
+              </div>
+
+              {/* Subtitle Languages Selector & One-Click Preset Pills */}
+              <div className="flex flex-col gap-2 pt-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase">
+                    Hedef Altyazı & Çeviri Dilleri (Virgülle Ayrılmış ISO Kodları)
+                  </label>
+                  <span className="text-[10px] font-mono text-[var(--accent)] font-bold">Seçilen: {preferences.sub_langs || 'tr,en'}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={preferences.sub_langs || 'tr,en'}
+                    onChange={(e) => handleValueChange('sub_langs', e.target.value)}
+                    placeholder="tr,en,es,de,fr,ja,ru,all"
+                    className="flex-1 rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-elevated)] px-3.5 py-2 text-xs font-mono outline-none text-[var(--ink)] focus:border-[var(--accent)]"
+                  />
+                </div>
+
+                {/* One-Click Language Pills */}
+                <div className="flex items-center gap-2 flex-wrap pt-2">
+                  <span className="text-[10px] font-mono text-[var(--ink-faint)] mr-1">Hızlı Ekle / Çıkar:</span>
+                  {[
+                    { code: 'tr', label: '🇹🇷 Türkçe' },
+                    { code: 'en', label: '🇬🇧 İngilizce' },
+                    { code: 'es', label: '🇪🇸 İspanyolca' },
+                    { code: 'de', label: '🇩🇪 Almanca' },
+                    { code: 'fr', label: '🇫🇷 Fransızca' },
+                    { code: 'ja', label: '🇯🇵 Japonca' },
+                    { code: 'ru', label: '🇷🇺 Rusça' },
+                    { code: 'all', label: '🌐 Tüm Diller (All)' }
+                  ].map(lang => {
+                    const currentLangs = (preferences.sub_langs || '').split(',').map(s => s.trim());
+                    const isSelected = currentLangs.includes(lang.code);
+                    return (
+                      <button
+                        key={lang.code}
+                        type="button"
+                        onClick={() => {
+                          let newLangs: string[];
+                          if (lang.code === 'all') {
+                            newLangs = ['all'];
+                          } else if (isSelected) {
+                            newLangs = currentLangs.filter(c => c !== lang.code && c !== 'all');
+                            if (newLangs.length === 0) newLangs = ['tr'];
+                          } else {
+                            newLangs = [...currentLangs.filter(c => c !== 'all'), lang.code];
+                          }
+                          handleValueChange('sub_langs', newLangs.join(','));
+                        }}
+                        className={`text-[11px] font-mono px-3 py-1.5 rounded-[var(--radius)] border transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-[var(--accent)] bg-[var(--accent)]/20 text-[var(--accent)] font-bold shadow-sm'
+                            : 'border-[var(--hairline-strong)] bg-[var(--bg-elevated)] text-[var(--ink-faint)] hover:text-[var(--ink)]'
+                        }`}
+                      >
+                        {lang.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
