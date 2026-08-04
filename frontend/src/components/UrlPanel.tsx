@@ -206,7 +206,7 @@ export const UrlPanel: React.FC = () => {
       }
     }
 
-    addToast(`${addedCount} video indirme kuyruğuna eklendi!`, 'success');
+    addToast(getTranslation(currentLang, 'msg_added_yt_playlist_items', { count: addedCount }), 'success');
     clearMetadata();
     setUrl('');
   };
@@ -259,10 +259,10 @@ export const UrlPanel: React.FC = () => {
                   {spotifyLoading ? (
                     <>
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>Çözümleniyor...</span>
+                      <span>{getTranslation(currentLang, 'lbl_fetching')}</span>
                     </>
                   ) : (
-                    <span>Spotify Çözümle</span>
+                    <span>{getTranslation(currentLang, 'btn_spotify_query')}</span>
                   )}
                 </button>
               ) : (
@@ -279,7 +279,7 @@ export const UrlPanel: React.FC = () => {
                   ) : (
                     <span>
                       {url.includes('list=') 
-                        ? '🎥 Oynatma Listesi Çözümle ->' 
+                        ? getTranslation(currentLang, 'lbl_playlist_query_btn') 
                         : url.includes('open.spotify.com')
                           ? getTranslation(currentLang, 'btn_spotify_query') 
                           : getTranslation(currentLang, 'lbl_query_btn')}
@@ -350,12 +350,12 @@ export const UrlPanel: React.FC = () => {
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-[var(--success)]">
                 {metadataState.data.playlist_entries && metadataState.data.playlist_entries.length > 0 
-                  ? `🎥 Oynatma Listesi Başarıyla Çözümlendi (${metadataState.data.playlist_entries.length} Video)` 
+                  ? getTranslation(currentLang, 'lbl_playlist_resolved_title', { count: metadataState.data.playlist_entries.length }) 
                   : getTranslation(currentLang, 'lbl_video_resolved')}
               </span>
               <span className="text-[11px] text-[var(--ink-dim)]">
                 {metadataState.data.playlist_entries && metadataState.data.playlist_entries.length > 0 
-                  ? `'${metadataState.data.title}' listesindeki videolar aşağıda sıralanmıştır. İndirmek istediklerinizi seçip ekleyebilirsiniz.` 
+                  ? getTranslation(currentLang, 'lbl_playlist_resolved_desc', { title: metadataState.data.title }) 
                   : getTranslation(currentLang, 'lbl_video_resolved_detail', { title: metadataState.data.title })}
               </span>
             </div>
@@ -367,7 +367,7 @@ export const UrlPanel: React.FC = () => {
           <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-2 animate-slide-in">
             <div className="flex items-center justify-between px-1">
               <span className="text-xs font-bold text-[var(--ink)] font-mono">
-                🎵 Çalma Listesi: {spotifyTracks.length} Şarkı Yüklendi
+                {getTranslation(currentLang, 'lbl_sp_playlist_header', { count: spotifyTracks.length })}
               </span>
               <div className="flex gap-2">
                 <button
@@ -380,14 +380,14 @@ export const UrlPanel: React.FC = () => {
                   }}
                   className="text-[10px] font-mono text-[var(--accent)] hover:underline"
                 >
-                  Tümünü Seç
+                  {getTranslation(currentLang, 'lbl_select_all')}
                 </button>
                 <span className="text-[10px] text-[var(--ink-faint)]">|</span>
                 <button
                   onClick={() => setSelectedTracks({})}
                   className="text-[10px] font-mono text-[var(--ink-faint)] hover:text-[var(--ink)] hover:underline"
                 >
-                  Seçimleri Kaldır
+                  {getTranslation(currentLang, 'lbl_deselect_all')}
                 </button>
               </div>
             </div>
@@ -431,13 +431,13 @@ export const UrlPanel: React.FC = () => {
                 onClick={handleAddSelectedToQueue}
                 className="flex-1 rounded-[var(--radius)] bg-[var(--accent)] py-2.5 text-xs font-bold uppercase tracking-widest text-[var(--accent-ink)] hover:bg-[var(--accent-deep)] active:scale-98 transition-all font-mono"
               >
-                Seçilen {Object.values(selectedTracks).filter(Boolean).length} Şarkıyı İndirme Kuyruğuna Ekle
+                {getTranslation(currentLang, 'btn_add_selected_sp', { count: Object.values(selectedTracks).filter(Boolean).length })}
               </button>
               <button
                 onClick={() => setSpotifyTracks([])}
                 className="rounded-[var(--radius)] border border-[var(--hairline-strong)] px-4 py-2.5 text-xs font-semibold text-[var(--ink)] hover:border-red-500/50 hover:text-red-500 transition-all font-mono"
               >
-                İptal Et
+                {getTranslation(currentLang, 'btn_cancel_playlist')}
               </button>
             </div>
           </div>
@@ -448,8 +448,8 @@ export const UrlPanel: React.FC = () => {
           <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-2 animate-slide-in">
             <div className="flex items-center justify-between px-1">
               <span className="text-xs font-bold text-[var(--ink)] font-mono flex items-center gap-2">
-                <span>🎥 Çalma Listesi:</span>
-                <span className="text-[var(--accent)]">{metadataState.data.playlist_entries.length} Video Yüklendi</span>
+                <span>{getTranslation(currentLang, 'lbl_yt_playlist_header')}</span>
+                <span className="text-[var(--accent)]">{getTranslation(currentLang, 'lbl_yt_playlist_count', { count: metadataState.data.playlist_entries.length })}</span>
               </span>
               <div className="flex gap-2">
                 <button
@@ -462,14 +462,14 @@ export const UrlPanel: React.FC = () => {
                   }}
                   className="text-[10px] font-mono text-[var(--accent)] hover:underline"
                 >
-                  Tümünü Seç
+                  {getTranslation(currentLang, 'lbl_select_all')}
                 </button>
                 <span className="text-[10px] text-[var(--ink-faint)]">|</span>
                 <button
                   onClick={() => setSelectedYtEntries({})}
                   className="text-[10px] font-mono text-[var(--ink-faint)] hover:text-[var(--ink)] hover:underline"
                 >
-                  Seçimleri Kaldır
+                  {getTranslation(currentLang, 'lbl_deselect_all')}
                 </button>
               </div>
             </div>
@@ -515,13 +515,13 @@ export const UrlPanel: React.FC = () => {
                 onClick={handleAddSelectedYtToQueue}
                 className="flex-1 rounded-[var(--radius)] bg-[var(--accent)] py-2.5 text-xs font-bold uppercase tracking-widest text-[var(--accent-ink)] hover:bg-[var(--accent-deep)] active:scale-98 transition-all font-mono"
               >
-                Seçilen {Object.values(selectedYtEntries).filter(Boolean).length} Videoyu İndirme Kuyruğuna Ekle
+                {getTranslation(currentLang, 'btn_add_selected_yt', { count: Object.values(selectedYtEntries).filter(Boolean).length })}
               </button>
               <button
                 onClick={() => clearMetadata()}
                 className="rounded-[var(--radius)] border border-[var(--hairline-strong)] px-4 py-2.5 text-xs font-semibold text-[var(--ink)] hover:border-red-500/50 hover:text-red-500 transition-all font-mono"
               >
-                İptal Et
+                {getTranslation(currentLang, 'btn_cancel_playlist')}
               </button>
             </div>
           </div>

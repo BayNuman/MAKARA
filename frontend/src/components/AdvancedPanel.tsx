@@ -193,7 +193,7 @@ export const AdvancedPanel: React.FC = () => {
             }`}
           >
             <FileText className="h-3.5 w-3.5" />
-            <span>💬 Altyazı & Çeviri</span>
+            <span>{getTranslation(currentLang, 'tab_subtitles')}</span>
           </button>
           <button
             onClick={() => setActiveTab('general')}
@@ -293,22 +293,22 @@ export const AdvancedPanel: React.FC = () => {
               <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-[var(--accent)] font-mono">
-                    💬 Altyazı & AI Otomatik Çeviri Motoru
+                    {getTranslation(currentLang, 'lbl_sub_engine_title')}
                   </span>
                   <span className="text-[11px] text-[var(--ink-faint)]">
-                    Videolardan altyazı çekme, otomatik AI çevirisi yapma ve videoya (MP4/MKV) gömme ayarları.
+                    {getTranslation(currentLang, 'lbl_sub_engine_desc')}
                   </span>
                 </div>
                 <span className="text-[9px] font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2.5 py-1 rounded border border-[var(--accent)]/20 font-bold">
-                  SUBTITLE & TRANSLATE ENGINE
+                  {getTranslation(currentLang, 'lbl_sub_engine_badge')}
                 </span>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 py-2 border-b border-[var(--hairline)]">
                 <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-[var(--ink)]">Manuel Altyazılar</span>
-                    <span className="text-[10px] text-[var(--ink-faint)]">Resmi insan altyazılarını indir</span>
+                    <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_manual_subs')}</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">{getTranslation(currentLang, 'lbl_manual_subs_desc')}</span>
                   </div>
                   <div 
                     className={`toggle-sw ${preferences.subtitle_flag ? 'on' : ''}`}
@@ -318,8 +318,8 @@ export const AdvancedPanel: React.FC = () => {
 
                 <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-[var(--ink)]">Otomatik AI Çeviri</span>
-                    <span className="text-[10px] text-[var(--ink-faint)]">Otomatik üretilen altyazılar</span>
+                    <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_auto_ai_subs')}</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">{getTranslation(currentLang, 'lbl_auto_ai_subs_desc')}</span>
                   </div>
                   <div 
                     className={`toggle-sw ${preferences.auto_subtitle_flag ? 'on' : ''}`}
@@ -329,8 +329,8 @@ export const AdvancedPanel: React.FC = () => {
 
                 <div className="flex items-center justify-between bg-[var(--bg-elevated)] p-3 rounded-[var(--radius)] border border-[var(--hairline)]">
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-[var(--ink)]">Videoya Göm (Soft-Sub)</span>
-                    <span className="text-[10px] text-[var(--ink-faint)]">MP4/MKV içine altyazı ekle</span>
+                    <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_embed_softsubs')}</span>
+                    <span className="text-[10px] text-[var(--ink-faint)]">{getTranslation(currentLang, 'lbl_embed_softsubs_desc')}</span>
                   </div>
                   <div 
                     className={`toggle-sw ${preferences.embed_subs !== false ? 'on' : ''}`}
@@ -343,9 +343,9 @@ export const AdvancedPanel: React.FC = () => {
               <div className="flex flex-col gap-2 pt-1">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase">
-                    Hedef Altyazı & Çeviri Dilleri (Virgülle Ayrılmış ISO Kodları)
+                    {getTranslation(currentLang, 'lbl_target_sub_langs')}
                   </label>
-                  <span className="text-[10px] font-mono text-[var(--accent)] font-bold">Seçilen: {preferences.sub_langs || 'tr,en'}</span>
+                  <span className="text-[10px] font-mono text-[var(--accent)] font-bold">{getTranslation(currentLang, 'lbl_selected_langs', { langs: preferences.sub_langs || 'tr,en' })}</span>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -360,16 +360,16 @@ export const AdvancedPanel: React.FC = () => {
 
                 {/* One-Click Language Pills */}
                 <div className="flex items-center gap-2 flex-wrap pt-2">
-                  <span className="text-[10px] font-mono text-[var(--ink-faint)] mr-1">Hızlı Ekle / Çıkar:</span>
+                  <span className="text-[10px] font-mono text-[var(--ink-faint)] mr-1">{getTranslation(currentLang, 'lbl_quick_add_langs')}</span>
                   {[
-                    { code: 'tr', label: '🇹🇷 Türkçe' },
-                    { code: 'en', label: '🇬🇧 İngilizce' },
-                    { code: 'es', label: '🇪🇸 İspanyolca' },
-                    { code: 'de', label: '🇩🇪 Almanca' },
-                    { code: 'fr', label: '🇫🇷 Fransızca' },
-                    { code: 'ja', label: '🇯🇵 Japonca' },
-                    { code: 'ru', label: '🇷🇺 Rusça' },
-                    { code: 'all', label: '🌐 Tüm Diller (All)' }
+                    { code: 'tr', label: getTranslation(currentLang, 'lbl_lang_tr') },
+                    { code: 'en', label: getTranslation(currentLang, 'lbl_lang_en') },
+                    { code: 'es', label: getTranslation(currentLang, 'lbl_lang_es') },
+                    { code: 'de', label: getTranslation(currentLang, 'lbl_lang_de') },
+                    { code: 'fr', label: getTranslation(currentLang, 'lbl_lang_fr') },
+                    { code: 'ja', label: getTranslation(currentLang, 'lbl_lang_ja') },
+                    { code: 'ru', label: getTranslation(currentLang, 'lbl_lang_ru') },
+                    { code: 'all', label: getTranslation(currentLang, 'lbl_lang_all') }
                   ].map(lang => {
                     const currentLangs = (preferences.sub_langs || '').split(',').map(s => s.trim());
                     const isSelected = currentLangs.includes(lang.code);
@@ -446,14 +446,14 @@ export const AdvancedPanel: React.FC = () => {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[var(--ink)]">{currentLang === 'tr' ? 'Otomatik Pano Takibi' : 'Clipboard Listener'}</span>
+                  <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_clipboard_listener')}</span>
                   <div 
                     className={`toggle-sw ${preferences.enable_clipboard_listener !== false ? 'on' : ''}`}
                     onClick={() => handleToggle('enable_clipboard_listener')}
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[var(--ink)]">{currentLang === 'tr' ? 'Şarkı Sözleri (LRCLIB)' : 'Synced Lyrics (LRCLIB)'}</span>
+                  <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_synced_lyrics')}</span>
                   <div 
                     className={`toggle-sw ${preferences.auto_fetch_lyrics !== false ? 'on' : ''}`}
                     onClick={() => handleToggle('auto_fetch_lyrics')}
@@ -508,7 +508,7 @@ export const AdvancedPanel: React.FC = () => {
                     {installedBrowsers.length > 0 ? (
                       installedBrowsers.filter(b => b.id !== 'disabled').map(b => (
                         <option key={b.id} value={b.id} className="bg-[var(--bg-elevated)]">
-                          {b.name} {b.installed ? ' (✓ Kurulu)' : ' (Bulunamadı)'}
+                          {b.name} {b.installed ? ` ${getTranslation(currentLang, 'lbl_installed_badge')}` : ` ${getTranslation(currentLang, 'lbl_not_found_badge')}`}
                         </option>
                       ))
                     ) : (

@@ -124,19 +124,6 @@ class DownloadTask:
 
 
 def get_default_lang() -> str:
-    import locale
-    try:
-        for get_func in (locale.getlocale, locale.getdefaultlocale):
-            try:
-                sys_lang = get_func()[0]
-                if sys_lang:
-                    lang_code = sys_lang.split("_")[0].lower()
-                    if lang_code in ("tr", "es", "en"):
-                        return lang_code
-            except Exception:
-                continue
-    except Exception:
-        pass
     return "en"
 
 def load_app_preferences(prefs):
