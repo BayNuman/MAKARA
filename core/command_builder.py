@@ -206,10 +206,27 @@ def build_command(item, output_dir: str) -> list[str]:
     sub_langs = str(safe_get(item, "sub_langs", "tr,en")).strip()
     if not sub_langs:
         sub_langs = "tr,en"
+    
+    lang_parts = [l.strip() for l in sub_langs.split(",") if l.strip()]
+    expanded_langs = []
+    for l in lang_parts:
+        if l not in expanded_langs:
+            expanded_langs.append(l)
+        if l != "all" and not l.endswith("*"):
+            pattern1 = f"{l}-*"
+            pattern2 = f"{l}.*"
+            if pattern1 not in expanded_langs:
+                expanded_langs.append(pattern1)
+            if pattern2 not in expanded_langs:
+                expanded_langs.append(pattern2)
+    final_sub_langs = ",".join(expanded_langs)
+
+    if safe_get(item, "subs") or safe_get(item, "auto_subs"):
+        cmd.append("--ignore-errors")
     if safe_get(item, "subs"):
-        cmd.extend(["--write-subs", "--sub-langs", sub_langs, "--convert-subs", "srt"])
+        cmd.extend(["--write-subs", "--sub-langs", final_sub_langs, "--convert-subs", "srt"])
     if safe_get(item, "auto_subs"):
-        cmd.extend(["--write-auto-subs", "--sub-langs", sub_langs, "--convert-subs", "srt"])
+        cmd.extend(["--write-auto-subs", "--sub-langs", final_sub_langs, "--convert-subs", "srt"])
     if (safe_get(item, "subs") or safe_get(item, "auto_subs")) and safe_get(item, "embed_subs", True):
         cmd.append("--embed-subs")
     if safe_get(item, "restrict_names") or (folder_org and folder_org != "None"):
