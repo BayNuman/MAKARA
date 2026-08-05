@@ -138,6 +138,17 @@ class AppController:
                     )
                     return False, error_msg, 0
 
+        # Remap frontend preference key names → DownloadTask field names
+        # The frontend stores these as *_flag variants, but DownloadTask uses shorter names.
+        _PREF_TO_TASK_KEY = {
+            "subtitle_flag": "subs",
+            "auto_subtitle_flag": "auto_subs",
+            "metadata_flag": "metadata",
+        }
+        for pref_key, task_key in _PREF_TO_TASK_KEY.items():
+            if pref_key in item_cfg and task_key not in item_cfg:
+                item_cfg[task_key] = item_cfg.pop(pref_key)
+
         valid_task_fields = {f.name for f in dataclasses.fields(DownloadTask)}
         base_cfg = {k: v for k, v in item_cfg.items() if k in valid_task_fields}
 
