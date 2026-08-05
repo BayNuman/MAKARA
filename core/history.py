@@ -210,23 +210,44 @@ def _do_clear_all_downloads(conn):
     except Exception:
         pass
     cursor.execute("DELETE FROM downloads")
+    
+    # Clean download_archive.txt so cleared items can be re-downloaded
+    try:
+        archive_file = get_app_data_dir() / "download_archive.txt"
+        if archive_file.exists():
+            os.remove(archive_file)
+    except Exception:
+        pass
 
 def _do_delete_download(conn, item_id: str):
     cursor = conn.cursor()
     # Physical file cleanup to prevent orphaned WebP cache files
+    url_to_remove = None
     try:
-        cursor.execute("SELECT thumbnail_path FROM downloads WHERE id = ?", (item_id,))
+        cursor.execute("SELECT thumbnail_path, url FROM downloads WHERE id = ?", (item_id,))
         row = cursor.fetchone()
-        if row and row[0]:
-            t_path = row[0]
-            if os.path.exists(t_path):
+        if row:
+            if row[0] and os.path.exists(row[0]):
                 try:
-                    os.remove(t_path)
+                    os.remove(row[0])
                 except Exception:
                     pass
+            url_to_remove = row[1]
     except Exception:
         pass
     cursor.execute("DELETE FROM downloads WHERE id = ?", (item_id,))
+
+    # Remove item from download_archive.txt if URL exists
+    if url_to_remove:
+        try:
+            archive_file = get_app_data_dir() / "download_archive.txt"
+            if archive_file.exists():
+                lines = archive_file.read_text(encoding="utf-8", errors="ignore").splitlines()
+                # Find matching lines (youtube ID or URL part)
+                new_lines = [line for line in lines if url_to_remove not in line and not any(part in line for part in url_to_remove.split("v=") if len(part) >= 11)]
+                archive_file.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+        except Exception:
+            pass
 
 # --- Exposed Non-Blocking API ---
 
