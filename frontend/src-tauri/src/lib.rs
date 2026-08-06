@@ -86,7 +86,7 @@ pub fn run() {
       tauri::RunEvent::ExitRequested { .. } | tauri::RunEvent::Exit => {
         #[cfg(windows)]
         {
-          let _ = Command::new("cmd").args(["/C", "taskkill /F /IM server-sidecar.exe 2>nul"]).status();
+          let _ = Command::new("cmd").args(["/C", "taskkill /F /IM server-sidecar.exe /IM server-sidecar-x86_64-pc-windows-msvc.exe 2>nul"]).status();
         }
       }
       _ => {}
