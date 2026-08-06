@@ -476,6 +476,13 @@ export const AdvancedPanel: React.FC = () => {
                     onClick={() => handleToggle('auto_fetch_lyrics')}
                   />
                 </div>
+                <div className="flex items-center justify-between border-t border-[var(--hairline)] pt-2 mt-2">
+                  <span className="text-xs font-semibold text-[var(--accent)]">{getTranslation(currentLang, 'lbl_allow_redownload')}</span>
+                  <div 
+                    className={`toggle-sw ${preferences.allow_redownload ? 'on' : ''}`}
+                    onClick={() => handleToggle('allow_redownload')}
+                  />
+                </div>
               </div>
 
               {/* Advanced Network Fields */}

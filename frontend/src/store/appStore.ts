@@ -45,6 +45,7 @@ export interface AppPreferences {
   subtitle_flag: boolean;
   auto_subtitle_flag: boolean;
   restrict_filenames: boolean;
+  allow_redownload?: boolean;
   keep_video_flag: boolean;
   embed_chapters: boolean;
   concurrent_fragments: string;
@@ -473,6 +474,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         }
       }
       get().addToast(msg, 'error');
+      return;
+    }
+    if (type === 'toast_archive_skipped') {
+      const title = typeof payload === 'string' ? payload : (payload?.title || '');
+      const lang = get().preferences?.current_lang || 'tr';
+      const msg = getTranslation(lang, 'toast_archive_skipped').replace('{title}', title);
+      get().addToast(msg, 'warning');
       return;
     }
     if (type === 'toast_cancel') {

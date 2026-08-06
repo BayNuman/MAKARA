@@ -302,6 +302,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_client_id: "Spotify Client ID",
     lbl_spotify_client_secret: "Spotify Client Secret",
     lbl_spotify_help: "Create an app at developer.spotify.com to get your keys.",
+    lbl_allow_redownload: "Allow Re-downloading Previously Downloaded Items",
+    toast_archive_skipped: "Skipped: '{title}' was downloaded before. Enable 'Allow Re-downloading' in Advanced Settings to download again in a different format.",
 
     // Subtitle & Translation Tab & Playlist Keys
     tab_subtitles: "💬 Subtitles & Translation",
@@ -645,6 +647,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_client_id: "Spotify Client ID",
     lbl_spotify_client_secret: "Spotify Client Secret",
     lbl_spotify_help: "Anahtarlarınızı almak için developer.spotify.com adresinde bir uygulama oluşturun.",
+    lbl_allow_redownload: "Daha Önce İndirilenleri Tekrar İndirmeye İzin Ver",
+    toast_archive_skipped: "Atlandı: '{title}' daha önce indirilmiş. Farklı formatta tekrar indirmek için Gelişmiş Ayarlar'dan 'Daha Önce İndirilenleri Tekrar İndirmeye İzin Ver' seçeneğini açabilirsiniz.",
 
     // Subtitle & Translation Tab & Playlist Keys in TR
     tab_subtitles: "💬 Altyazı & Çeviri",
@@ -988,6 +992,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_client_id: "Spotify Client ID",
     lbl_spotify_client_secret: "Spotify Client Secret",
     lbl_spotify_help: "Cree una app en developer.spotify.com para obtener sus claves.",
+    lbl_allow_redownload: "Permitir Redescarga de Elementos Anteriores",
+    toast_archive_skipped: "Omitido: '{title}' ya se había descargado. Active 'Permitir Redescarga' en Ajustes Avanzados para volver a descargarlo en otro formato.",
 
     // Subtitle & Translation Tab & Playlist Keys in ES
     tab_subtitles: "💬 Subtítulos y Traducción",

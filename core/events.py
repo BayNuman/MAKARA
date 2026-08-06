@@ -15,6 +15,7 @@ class EventKind(str, Enum):
     TOAST_SUCCESS = "toast_success"
     TOAST_CANCEL = "toast_cancel"
     TOAST_ERROR = "toast_error"
+    TOAST_ARCHIVE_SKIPPED = "toast_archive_skipped"
     QUEUE_DONE = "queue_done"
 
 @dataclass

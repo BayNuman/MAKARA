@@ -45,6 +45,7 @@ class DownloadTask:
     max_downloads: str = ""
     rate_limit: str = ""
     archive: bool = True
+    allow_redownload: bool = False
     retries: str = ""
     concurrent_fragments: str = "3"
     cookies: str = ""
@@ -196,6 +197,7 @@ class AppPreferences:
     sub_langs: str = "tr,en"
     embed_subs: bool = True
     restrict_filenames: bool = False
+    allow_redownload: bool = False
     keep_video_flag: bool = False
     embed_chapters: bool = False
     concurrent_fragments: str = "3"

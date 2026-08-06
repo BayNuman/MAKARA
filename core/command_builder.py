@@ -245,7 +245,7 @@ def build_command(item, output_dir: str) -> list[str]:
     if rate_limit:
         cmd.extend(["--limit-rate", rate_limit])
 
-    if safe_get(item, "archive"):
+    if safe_get(item, "archive") and not safe_get(item, "allow_redownload"):
         from core.history import get_app_data_dir
         archive_file = str(get_app_data_dir() / "download_archive.txt")
         cmd.extend(["--download-archive", archive_file])

@@ -222,11 +222,13 @@ def run_command_stream(cmd: list[str], task: DownloadTask, state: AppState, emit
                 task._output_file = full_path
 
             already_match = already_re.search(line)
-            if already_match:
-                full_path = already_match.group(1).strip()
-                filename = Path(full_path).name
-                emitter.emit(AppEvent(EventKind.ACTIVE_FILE, (task.id, filename)))
-                task._output_file = full_path
+            if already_match or "has already been recorded in the archive" in line:
+                if already_match:
+                    full_path = already_match.group(1).strip()
+                    filename = Path(full_path).name
+                    emitter.emit(AppEvent(EventKind.ACTIVE_FILE, (task.id, filename)))
+                    task._output_file = full_path
+                emitter.emit(AppEvent(EventKind.TOAST_ARCHIVE_SKIPPED, task.title))
 
             merge_match = merge_re.search(line)
             if merge_match:
