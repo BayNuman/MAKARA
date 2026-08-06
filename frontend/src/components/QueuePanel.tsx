@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, History, Play, Pause, Trash2, ExternalLink, FolderOpen, Calendar, HardDrive } from 'lucide-react';
+import { List, History, Play, Pause, Trash2, ExternalLink, FolderOpen, Calendar, HardDrive, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { getTranslation } from '../i18n/translations';
 
@@ -19,7 +19,12 @@ export const QueuePanel: React.FC = () => {
   } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<'queue' | 'history'>('queue');
+  const [isExpanded, setIsExpanded] = useState(false);
   const currentLang = preferences?.current_lang || 'en';
+
+  const totalPercent = queue.length > 0 
+    ? Math.round(queue.reduce((acc, curr) => acc + (curr.percent || 0), 0) / queue.length)
+    : 0;
 
   // Load queue and history on mount and keep synced
   useEffect(() => {
@@ -71,7 +76,41 @@ export const QueuePanel: React.FC = () => {
 
   return (
     <div className="w-full border-b border-[var(--hairline)] p-6 transition-all duration-300">
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4">
+        
+        {/* Collapsible Header */}
+        <div 
+          className="flex items-center justify-between cursor-pointer select-none group"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]/10 text-[var(--accent)] transition-colors group-hover:bg-[var(--accent)]/20">
+              <List className="h-4 w-4" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-[var(--ink)] tracking-tight">
+                {getTranslation(currentLang, 'lbl_download_list')}
+              </span>
+              <span className="text-[10px] font-mono text-[var(--ink-faint)] uppercase">
+                {queue.length} {currentLang === 'tr' ? 'Öğe' : currentLang === 'es' ? 'Elementos' : 'Items'} | %{totalPercent} {currentLang === 'tr' ? 'Tamamlandı' : currentLang === 'es' ? 'Completado' : 'Completed'}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block w-32 h-1.5 rounded-full bg-[var(--bg-recessed)] overflow-hidden">
+              <div 
+                className="h-full bg-[var(--accent)] transition-all duration-500 ease-out" 
+                style={{ width: `${totalPercent}%` }}
+              />
+            </div>
+            <ChevronDown 
+              className={`h-4 w-4 text-[var(--ink-faint)] transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} 
+            />
+          </div>
+        </div>
+
+        {isExpanded && (
+          <div className="flex flex-col gap-6 pt-2 animate-slide-in">
         
         {/* Navigation & Controls */}
         <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
@@ -263,6 +302,9 @@ export const QueuePanel: React.FC = () => {
           )}
 
         </div>
+
+          </div>
+        )}
 
       </div>
     </div>

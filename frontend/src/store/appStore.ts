@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { apiClient } from '../api/client';
 import type { WsEvent } from '../hooks/useWebSocket';
+import { getTranslation } from '../i18n/translations';
 
 export interface DownloadTask {
   id: string;
@@ -171,7 +172,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const res = await apiClient.get('/config/preferences');
       set({ preferences: res.data });
     } catch (err) {
-      get().addToast('Ayarlar yüklenemedi.', 'error');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_settings_loaded_error'), 'error');
     }
   },
 
@@ -179,9 +180,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     try {
       const res = await apiClient.patch('/config/preferences', patch);
       set({ preferences: res.data.preferences });
-      get().addToast('Ayarlar kaydedildi.', 'success');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_settings_saved'), 'success');
     } catch (err) {
-      get().addToast('Ayarlar güncellenemedi.', 'error');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_settings_save_error'), 'error');
     }
   },
 
@@ -277,10 +278,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   removeTask: async (taskId) => {
     try {
       await apiClient.delete(`/queue/${taskId}`);
-      get().addToast('Görev kuyruktan silindi.', 'success');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_task_removed'), 'success');
       await get().fetchQueue();
     } catch (err) {
-      get().addToast('Görev silinemedi.', 'error');
+      console.error('Görev silinemedi:', err);
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_task_add_error'), 'error');
     }
   },
 
@@ -337,20 +339,22 @@ export const useAppStore = create<AppState>((set, get) => ({
   deleteHistoryItem: async (recordId) => {
     try {
       await apiClient.delete(`/history/${recordId}`);
-      get().addToast('Geçmiş kaydı silindi.', 'success');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_history_deleted'), 'success');
       await get().fetchHistory();
     } catch (err) {
-      get().addToast('Kayıt silinemedi.', 'error');
+      console.error('Kayıt silinemedi:', err);
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_history_clear_error'), 'error');
     }
   },
 
   clearHistory: async () => {
     try {
       await apiClient.post('/history/clear');
-      get().addToast('Tüm geçmiş temizlendi.', 'success');
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_history_cleared'), 'success');
       await get().fetchHistory();
     } catch (err) {
-      get().addToast('Geçmiş temizlenemedi.', 'error');
+      console.error('Geçmiş temizlenemedi:', err);
+      get().addToast(getTranslation(get().preferences?.current_lang || 'en', 'toast_history_clear_error'), 'error');
     }
   },
 
@@ -510,12 +514,15 @@ export const useAppStore = create<AppState>((set, get) => ({
             case 'stats':
               return {
                 ...task,
+                percent: payload?.percent ?? task.percent,
                 speed: payload?.speed || task.speed,
                 eta: payload?.eta || task.eta,
                 size: payload?.size || task.size,
               };
             case 'status':
-              return { ...task, status: payload || '', status_code: payload || '' };
+              const statusCode = Array.isArray(payload) ? payload[0] : (payload || '');
+              const statusText = Array.isArray(payload) ? payload[2] : (payload || '');
+              return { ...task, status: statusText, status_code: statusCode };
             default:
               return task;
           }

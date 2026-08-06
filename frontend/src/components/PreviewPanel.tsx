@@ -210,7 +210,6 @@ export const PreviewPanel: React.FC = () => {
         <div className="md:col-span-3 flex flex-col gap-5 justify-between">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <span className="panel-idx">02</span>
               <h2 className="text-xs font-semibold tracking-widest text-[var(--ink-dim)] uppercase font-mono">
                 {getTranslation(currentLang, 'lbl_clip_settings')}
               </h2>
@@ -330,7 +329,7 @@ export const PreviewPanel: React.FC = () => {
 
                   <div className="flex justify-between text-[10px] font-mono text-[var(--ink-faint)] px-1">
                     <span>{clipStart}</span>
-                    <span>{currentLang === 'tr' ? 'Seçili Süre:' : currentLang === 'es' ? 'Duración:' : 'Selected:'} {formatSeconds(parseTimeToSeconds(clipEnd) - parseTimeToSeconds(clipStart))}</span>
+                    <span>{getTranslation(currentLang, 'lbl_selected_duration')} {formatSeconds(parseTimeToSeconds(clipEnd) - parseTimeToSeconds(clipStart))}</span>
                     <span>{clipEnd}</span>
                   </div>
                 </div>
@@ -391,7 +390,7 @@ export const PreviewPanel: React.FC = () => {
           {/* Download Mode Selector */}
           <div className="flex flex-col gap-1.5 pt-1">
             <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-              {currentLang === 'tr' ? 'İndirme Modu' : currentLang === 'es' ? 'Modo de Descarga' : 'Download Mode'}
+              {getTranslation(currentLang, 'lbl_download_mode')}
             </label>
             <select
               value={preferences?.mode || 'Video'}
@@ -401,10 +400,10 @@ export const PreviewPanel: React.FC = () => {
               className="w-full rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
             >
               <option value="Video" className="bg-[var(--bg-elevated)]">
-                📹 {currentLang === 'tr' ? 'Video + Ses (Görüntü)' : currentLang === 'es' ? 'Video + Audio' : 'Video + Audio'}
+                📹 {getTranslation(currentLang, 'opt_mode_video')}
               </option>
               <option value="Audio" className="bg-[var(--bg-elevated)]">
-                🎵 {currentLang === 'tr' ? 'Sadece Ses (Audio)' : currentLang === 'es' ? 'Solo Audio' : 'Audio Only'}
+                🎵 {getTranslation(currentLang, 'opt_mode_audio')}
               </option>
             </select>
           </div>

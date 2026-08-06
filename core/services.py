@@ -19,6 +19,7 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         'skip_download': True,
         'quiet': True,
         'no_warnings': True,
+        'legacyserverconnect': True,
     }
 
     if 'list=' in url:

@@ -82,7 +82,7 @@ const App: React.FC = () => {
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#E8A33D] border-t-transparent" />
           <span className="text-sm font-semibold tracking-wider">
-            yt-dlp Downloader Pro yükleniyor...
+            Loading Makara Pro...
           </span>
         </div>
       </div>
@@ -117,7 +117,7 @@ const App: React.FC = () => {
                 MAKARA
               </h1>
               <p className="text-[10px] font-mono tracking-widest text-[var(--ink-dim)] uppercase mt-0.5">
-                {currentLang === 'tr' ? 'Tarama & Aktarım Odası' : currentLang === 'es' ? 'Sala de Escaneo y Transferencia' : 'Scan & Transfer Room'}
+                {getTranslation(currentLang, 'lbl_scan_room')}
               </p>
             </div>
           </div>
@@ -127,7 +127,7 @@ const App: React.FC = () => {
             {/* Connection Indicator */}
             <div className="pill hidden md:flex">
               <span className="dot-live" />
-              <span>{appStatusText} · 127.0.0.1:8765</span>
+              <span>{appStatusText}</span>
             </div>
 
             {/* Language Selection */}

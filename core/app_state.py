@@ -48,7 +48,7 @@ class DownloadTask:
     retries: str = ""
     concurrent_fragments: str = "3"
     cookies: str = ""
-    browser_cookies: str = "disabled"
+    browser_cookies: str = "auto"
     youtube_403: bool = True
     output_template: str = ""
     extra_args: str = ""
@@ -185,7 +185,7 @@ class AppPreferences:
 
     # Shared settings (SponsorBlock, browser cookies, speed limits)
     sponsorblock_enabled: bool = False
-    browser_cookies: str = "disabled"
+    browser_cookies: str = "auto"
     speed_limit: Optional[str] = None
 
     # Advanced panel configurations

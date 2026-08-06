@@ -127,7 +127,7 @@ export const UrlPanel: React.FC = () => {
   const handleSpotifyFetch = async () => {
     const trimmedUrl = url.trim();
     if (!trimmedUrl.includes('open.spotify.com/playlist/')) {
-      addToast('Lütfen geçerli bir Spotify Çalma Listesi URL\'si girin.', 'warning');
+      addToast(getTranslation(currentLang, 'toast_invalid_spotify_url'), 'warning');
       return;
     }
     setSpotifyLoading(true);
@@ -142,11 +142,11 @@ export const UrlPanel: React.FC = () => {
           initialSelects[idx] = true;
         });
         setSelectedTracks(initialSelects);
-        addToast(`${res.data.tracks.length} şarkı başarıyla yüklendi!`, 'success');
+        addToast(getTranslation(currentLang, 'toast_spotify_loaded').replace('{count}', String(res.data.tracks.length)), 'success');
       }
     } catch (err: any) {
       console.error('Spotify fetch failed:', err);
-      const detail = err.response?.data?.detail || 'Spotify çalma listesi yüklenemedi. Lütfen Client ID ve Secret ayarlarınızı kontrol edin.';
+      const detail = err.response?.data?.detail || getTranslation(currentLang, 'toast_spotify_error');
       addToast(detail, 'error');
     } finally {
       setSpotifyLoading(false);
@@ -156,7 +156,7 @@ export const UrlPanel: React.FC = () => {
   const handleAddSelectedToQueue = async () => {
     const selectedList = spotifyTracks.filter((_, idx) => selectedTracks[idx]);
     if (selectedList.length === 0) {
-      addToast('Lütfen kuyruğa eklemek için en az bir şarkı seçin.', 'warning');
+      addToast(getTranslation(currentLang, 'toast_select_songs'), 'warning');
       return;
     }
     
@@ -177,7 +177,7 @@ export const UrlPanel: React.FC = () => {
       }
     }
     
-    addToast(`${addedCount} şarkı indirme kuyruğuna eklendi!`, 'success');
+    addToast(getTranslation(currentLang, 'toast_songs_added').replace('{count}', String(addedCount)), 'success');
     // Clear list
     setSpotifyTracks([]);
     setUrl('');
@@ -187,7 +187,7 @@ export const UrlPanel: React.FC = () => {
     const entries = metadataState.data?.playlist_entries || [];
     const selectedList = entries.filter((_: any, idx: number) => selectedYtEntries[idx]);
     if (selectedList.length === 0) {
-      addToast('Lütfen kuyruğa eklemek için en az bir video seçin.', 'warning');
+      addToast(getTranslation(currentLang, 'toast_select_videos'), 'warning');
       return;
     }
 
@@ -217,7 +217,6 @@ export const UrlPanel: React.FC = () => {
         {/* Title */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="panel-idx">01</span>
             <h2 className="text-xs font-semibold tracking-widest text-[var(--ink-dim)] uppercase font-mono">
               {getTranslation(currentLang, 'lbl_media_source')}
             </h2>

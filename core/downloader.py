@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+import copy
 import shlex
 import subprocess
 import ctypes
@@ -19,6 +20,7 @@ class CommandResult(NamedTuple):
     returncode: int
     saw_http_403: bool
     saw_outdated: bool
+    saw_cookie_error: bool
 
 # Windows Sleep prevention constants
 ES_CONTINUOUS = 0x80000000
@@ -145,6 +147,7 @@ def run_command_stream(cmd: list[str], task: DownloadTask, state: AppState, emit
 
     saw_http_403 = False
     saw_outdated_warning = False
+    saw_cookie_error = False
 
     startupinfo = None
     if os.name == 'nt':
@@ -219,15 +222,18 @@ def run_command_stream(cmd: list[str], task: DownloadTask, state: AppState, emit
                 emitter.emit(AppEvent(EventKind.ACTIVE_FILE, (task.id, filename)))
                 task._output_file = full_path
 
-            if "HTTP Error 403: Forbidden" in line:
+            if "HTTP Error 403: Forbidden" in line or "Sign in to confirm you" in line:
                 saw_http_403 = True
             if "version" in line and "older than 90 days" in line:
                 saw_outdated_warning = True
+            if "Could not extract" in line or "Could not copy" in line:
+                saw_cookie_error = True
 
         return CommandResult(
             returncode=process.wait(),
             saw_http_403=saw_http_403,
-            saw_outdated=saw_outdated_warning
+            saw_outdated=saw_outdated_warning,
+            saw_cookie_error=saw_cookie_error
         )
     finally:
         unregister_active_subprocess(process)
@@ -656,15 +662,37 @@ def download_single_task(task: DownloadTask, state: AppState, emitter: EventEmit
             return
 
         if result.returncode != 0:
-            should_retry = (
-                result.saw_http_403
-                and task.youtube_403
-                and YOUTUBE_FALLBACK_EXTRACTOR_ARGS not in " ".join(cmd)
-            )
-            if should_retry:
-                emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] YouTube 403 Forbidden, triggering TV Client fallback...\n"))
-                retry_cmd = append_options_before_urls(cmd, [task.url], ["--extractor-args", YOUTUBE_FALLBACK_EXTRACTOR_ARGS])
-                result = run_command_stream(retry_cmd, task, state, emitter, cancel_event)
+            if getattr(task, "browser_cookies", "") == "auto" and (result.saw_http_403 or getattr(result, "saw_cookie_error", False)):
+                emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] Çerez hatası veya bot engeli algılandı. Otonom tarayıcı döngüsü başlatılıyor...\n"))
+                browsers_to_try = ["edge", "firefox", "brave", "opera", "vivaldi", "chrome"]
+                success = False
+                for b in browsers_to_try:
+                    if cancel_event.is_set() or task.cancel_event.is_set():
+                        break
+                    emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] Otonom Tarayıcı Deneniyor: {b}...\n"))
+                    temp_task = copy.copy(task)
+                    temp_task.browser_cookies = b
+                    retry_cmd = build_command(temp_task, state.output_dir)
+                    result = run_command_stream(retry_cmd, temp_task, state, emitter, cancel_event)
+                    if result.returncode == 0:
+                        success = True
+                        break
+                
+                if not success and not (cancel_event.is_set() or task.cancel_event.is_set()):
+                    if task.youtube_403 and YOUTUBE_FALLBACK_EXTRACTOR_ARGS not in " ".join(cmd):
+                        emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] Tüm tarayıcılar başarısız. TV Client fallback deneniyor...\n"))
+                        retry_cmd = append_options_before_urls(cmd, [task.url], ["--extractor-args", YOUTUBE_FALLBACK_EXTRACTOR_ARGS])
+                        result = run_command_stream(retry_cmd, task, state, emitter, cancel_event)
+            else:
+                should_retry = (
+                    result.saw_http_403
+                    and task.youtube_403
+                    and YOUTUBE_FALLBACK_EXTRACTOR_ARGS not in " ".join(cmd)
+                )
+                if should_retry:
+                    emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] YouTube 403 Forbidden, triggering TV Client fallback...\n"))
+                    retry_cmd = append_options_before_urls(cmd, [task.url], ["--extractor-args", YOUTUBE_FALLBACK_EXTRACTOR_ARGS])
+                    result = run_command_stream(retry_cmd, task, state, emitter, cancel_event)
 
         if result.returncode == 0:
             output_file = task._output_file

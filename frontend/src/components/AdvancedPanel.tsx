@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Video, Volume2, Settings2, Save, FileText } from 'lucide-react';
+import { Video, Volume2, Settings2, Save, FileText, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { getTranslation } from '../i18n/translations';
 
@@ -16,6 +16,7 @@ export const AdvancedPanel: React.FC = () => {
   const [newPresetName, setNewPresetName] = useState('');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [installedBrowsers, setInstalledBrowsers] = useState<Array<{ id: string; name: string; installed: boolean }>>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     fetchPresets();
@@ -97,10 +98,16 @@ export const AdvancedPanel: React.FC = () => {
         {/* Header with Preset Options */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
           <div className="flex items-center gap-2">
-            <span className="panel-idx">03</span>
             <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--ink)] font-mono">
               {getTranslation(currentLang, 'sec_advanced_config')}
             </h2>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="ml-1 p-1 rounded hover:bg-[var(--bg-recessed)] transition-all"
+              title={isExpanded ? 'Collapse' : 'Expand'}
+            >
+              <ChevronDown className={`h-4 w-4 text-[var(--ink-dim)] transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+            </button>
           </div>
 
           {/* Preset Selector */}
@@ -159,9 +166,19 @@ export const AdvancedPanel: React.FC = () => {
             </div>
           </div>
         )}
+        {/* Collapsed hint */}
+        {!isExpanded && (
+          <div 
+            onClick={() => setIsExpanded(true)}
+            className="flex items-center gap-2 text-xs text-[var(--ink-faint)] cursor-pointer hover:text-[var(--ink)] transition-colors py-2"
+          >
+            <Settings2 className="h-3.5 w-3.5" />
+            <span className="font-mono">{getTranslation(currentLang, 'advanced_toggle')}</span>
+          </div>
+        )}
 
-        {/* Tabs navigation */}
-        <div className="flex border-b border-[var(--hairline)] flex-wrap">
+        {/* Tabs navigation - only visible when expanded */}
+        {isExpanded && <div className="flex border-b border-[var(--hairline)] flex-wrap">
           <button
             onClick={() => setActiveTab('video')}
             className={`flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-xs font-semibold transition-all font-mono uppercase tracking-wider ${
@@ -206,10 +223,10 @@ export const AdvancedPanel: React.FC = () => {
             <Settings2 className="h-3.5 w-3.5" />
             <span>{getTranslation(currentLang, 'tab_network')}</span>
           </button>
-        </div>
+        </div>}
 
-        {/* Tab Contents */}
-        <div className="min-h-[180px]">
+        {/* Tab Contents - only visible when expanded */}
+        {isExpanded && <div className="min-h-[180px]">
           
           {/* Video Tab Content */}
           {activeTab === 'video' && (
@@ -497,14 +514,15 @@ export const AdvancedPanel: React.FC = () => {
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1 flex items-center justify-between">
                     <span>{getTranslation(currentLang, 'lbl_browser_cookies')}</span>
-                    <span className="text-[9px] text-green-400 font-bold">✓ OS OTO-ALGILAMA</span>
+                    <span className="text-[9px] text-green-400 font-bold">{getTranslation(currentLang, 'lbl_os_auto_detect')}</span>
                   </label>
                   <select
-                    value={preferences.browser_cookies || 'disabled'}
+                    value={preferences.browser_cookies || 'auto'}
                     onChange={(e) => handleValueChange('browser_cookies', e.target.value)}
                     className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
                   >
                     <option value="disabled" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_disabled')}</option>
+                    <option value="auto" className="bg-[var(--bg-elevated)] text-[var(--accent)]">{getTranslation(currentLang, 'opt_auto')}</option>
                     {installedBrowsers.length > 0 ? (
                       installedBrowsers.filter(b => b.id !== 'disabled').map(b => (
                         <option key={b.id} value={b.id} className="bg-[var(--bg-elevated)]">
@@ -528,131 +546,22 @@ export const AdvancedPanel: React.FC = () => {
               {/* Speed Limiter */}
               <div className="flex flex-col gap-1.5 border-t border-[var(--hairline)] pt-4">
                 <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                  {currentLang === 'tr' ? 'Bant Genişliği Hız Limitörü' : 'Bandwidth Speed Limiter'}
+                  {getTranslation(currentLang, 'lbl_bandwidth_limiter')}
                 </label>
                 <select
                   value={preferences.speed_limit || 'unlimited'}
                   onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
                   className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
                 >
-                  <option value="unlimited" className="bg-[var(--bg-elevated)]">{currentLang === 'tr' ? 'Sınırsız (Maksimum Hız)' : 'Unlimited (Max Speed)'}</option>
-                  <option value="1M" className="bg-[var(--bg-elevated)]">1 MB/s (Oyun & Yayın Dostu)</option>
+                  <option value="unlimited" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_unlimited')}</option>
+                  <option value="1M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_1m')}</option>
                   <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
-                  <option value="5M" className="bg-[var(--bg-elevated)]">5 MB/s (Dengeli Limit)</option>
+                  <option value="5M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_5m')}</option>
                   <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
                   <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
                 </select>
               </div>
 
-              {/* Subtitles & AI Auto-Translation Engine Control Card */}
-              <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-1 bg-[var(--bg-recessed)] p-4 rounded-[var(--radius)] border border-[var(--hairline-strong)]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-mono tracking-widest text-[var(--accent)] uppercase font-bold flex items-center gap-2">
-                    <span>💬 Altyazı & Otomatik Çeviri Motoru</span>
-                  </span>
-                  <span className="text-[9px] font-mono bg-[var(--accent)]/10 text-[var(--accent)] px-2 py-0.5 rounded border border-[var(--accent)]/20">
-                    AI AUTO-TRANSLATE ENGINE
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2 border-b border-[var(--hairline)]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold text-[var(--ink)]">Manuel Altyazılar</span>
-                      <span className="text-[10px] text-[var(--ink-faint)]">Resmi altyazıları indir</span>
-                    </div>
-                    <div 
-                      className={`toggle-sw ${preferences.subtitle_flag ? 'on' : ''}`}
-                      onClick={() => handleToggle('subtitle_flag')}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold text-[var(--ink)]">Otomatik AI Çeviri</span>
-                      <span className="text-[10px] text-[var(--ink-faint)]">Otomatik üretilen altyazılar</span>
-                    </div>
-                    <div 
-                      className={`toggle-sw ${preferences.auto_subtitle_flag ? 'on' : ''}`}
-                      onClick={() => handleToggle('auto_subtitle_flag')}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-semibold text-[var(--ink)]">Videoya Göm (Soft-Sub)</span>
-                      <span className="text-[10px] text-[var(--ink-faint)]">MP4/MKV içine altyazı ekle</span>
-                    </div>
-                    <div 
-                      className={`toggle-sw ${preferences.embed_subs !== false ? 'on' : ''}`}
-                      onClick={() => handleToggle('embed_subs')}
-                    />
-                  </div>
-                </div>
-
-                {/* Subtitle Languages Selector & One-Click Preset Pills */}
-                <div className="flex flex-col gap-2 pt-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase">
-                      Hedef Altyazı & Çeviri Dilleri (Virgülle Ayrılmış ISO Kodları)
-                    </label>
-                    <span className="text-[10px] font-mono text-[var(--accent)]">Seçilen: {preferences.sub_langs || 'tr,en'}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={preferences.sub_langs || 'tr,en'}
-                      onChange={(e) => handleValueChange('sub_langs', e.target.value)}
-                      placeholder="tr,en,es,de,fr,ja,ru,all"
-                      className="flex-1 rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-elevated)] px-3.5 py-2 text-xs font-mono outline-none text-[var(--ink)] focus:border-[var(--accent)]"
-                    />
-                  </div>
-
-                  {/* One-Click Language Pills */}
-                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                    <span className="text-[10px] font-mono text-[var(--ink-faint)] mr-1">Hızlı Ekle:</span>
-                    {[
-                      { code: 'tr', label: '🇹🇷 Türkçe' },
-                      { code: 'en', label: '🇬🇧 İngilizce' },
-                      { code: 'es', label: '🇪🇸 İspanyolca' },
-                      { code: 'de', label: '🇩🇪 Almanca' },
-                      { code: 'fr', label: '🇫🇷 Fransızca' },
-                      { code: 'ja', label: '🇯🇵 Japonca' },
-                      { code: 'ru', label: '🇷🇺 Rusça' },
-                      { code: 'all', label: '🌐 Tüm Diller (All)' }
-                    ].map(lang => {
-                      const currentLangs = (preferences.sub_langs || '').split(',').map(s => s.trim());
-                      const isSelected = currentLangs.includes(lang.code);
-                      return (
-                        <button
-                          key={lang.code}
-                          type="button"
-                          onClick={() => {
-                            let newLangs: string[];
-                            if (lang.code === 'all') {
-                              newLangs = ['all'];
-                            } else if (isSelected) {
-                              newLangs = currentLangs.filter(c => c !== lang.code && c !== 'all');
-                              if (newLangs.length === 0) newLangs = ['tr'];
-                            } else {
-                              newLangs = [...currentLangs.filter(c => c !== 'all'), lang.code];
-                            }
-                            handleValueChange('sub_langs', newLangs.join(','));
-                          }}
-                          className={`text-[10px] font-mono px-2.5 py-1 rounded-[var(--radius)] border transition-all cursor-pointer ${
-                            isSelected
-                              ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)] font-bold'
-                              : 'border-[var(--hairline-strong)] bg-[var(--bg-elevated)] text-[var(--ink-faint)] hover:text-[var(--ink)]'
-                          }`}
-                        >
-                          {lang.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
 
               {/* Extra Parameters */}
               <div className="flex flex-col gap-1.5 pt-2">
@@ -676,7 +585,7 @@ export const AdvancedPanel: React.FC = () => {
               {/* Spotify API Integration */}
               <div className="flex flex-col gap-3 border-t border-[var(--hairline)] pt-4 mt-2">
                 <span className="text-[10px] font-mono tracking-widest text-[var(--ink-dim)] uppercase px-1 font-bold">
-                  🎵 Spotify Çalma Listesi İndirme Entegrasyonu
+                  🎵 {getTranslation(currentLang, 'lbl_spotify_title')}
                 </span>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -688,41 +597,36 @@ export const AdvancedPanel: React.FC = () => {
                       type="text"
                       value={preferences.spotify_client_id || ''}
                       onChange={(e) => handleValueChange('spotify_client_id', e.target.value)}
-                      placeholder="Spotify Client ID girin"
+                      placeholder={getTranslation(currentLang, 'lbl_spotify_client_id')}
                       className="w-full rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] py-2.5 px-3.5 text-xs font-mono outline-none transition-all placeholder:text-[var(--ink-faint)] focus:border-[var(--accent)] text-[var(--ink)]"
                     />
                   </div>
                   
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                      Spotify Client Secret
+                      {getTranslation(currentLang, 'lbl_spotify_client_secret')}
                     </label>
                     <input
                       type="password"
                       value={preferences.spotify_client_secret || ''}
                       onChange={(e) => handleValueChange('spotify_client_secret', e.target.value)}
-                      placeholder="Spotify Client Secret girin"
+                      placeholder={getTranslation(currentLang, 'lbl_spotify_client_secret')}
                       className="w-full rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] py-2.5 px-3.5 text-xs font-mono outline-none transition-all placeholder:text-[var(--ink-faint)] focus:border-[var(--accent)] text-[var(--ink)]"
                     />
                   </div>
                 </div>
                 
                 <p className="text-[10px] text-[var(--ink-faint)] leading-relaxed px-1">
-                  💡 Spotify çalma listelerini çözümlemek için resmi bir geliştirici hesabı gereklidir.
-                  Ücretsiz olarak 1 dakikada almak için:
+                  💡 {getTranslation(currentLang, 'lbl_spotify_help')}
                   <br />
-                  1. <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noreferrer" className="text-[var(--accent)] underline">Spotify Developer Dashboard</a> sitesine girip giriş yapın.
-                  <br />
-                  2. <strong>Create App</strong> butonuna basın (App Name: Downloader, Redirect URI: http://localhost:8080 yapın).
-                  <br />
-                  3. Uygulamanızın ayarlarına (Settings) girip <strong>Client ID</strong> ve <strong>Client Secret</strong> kodlarını yukarıya yapıştırın.
+                  <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noreferrer" className="text-[var(--accent)] underline">Spotify Developer Dashboard</a>
                 </p>
               </div>
 
             </div>
           )}
 
-        </div>
+        </div>}
 
       </div>
     </div>

@@ -141,7 +141,7 @@ def build_command(item, output_dir: str) -> list[str]:
     else:
         output_template = str(safe_get(item, "output_template", "")).strip() or DEFAULT_OUTPUT_TEMPLATE
         
-    cmd: list[str] = [sys.executable, "-m", "yt_dlp", "--newline", "-P", out_dir, "-o", output_template]
+    cmd: list[str] = [sys.executable, "-m", "yt_dlp", "--newline", "--legacy-server-connect", "-P", out_dir, "-o", output_template]
 
     # If pre-fetched metadata exists (Multi-Clip Single-Fetch), inject it to avoid double-fetching network calls
     video_info = safe_get(item, "video_info")

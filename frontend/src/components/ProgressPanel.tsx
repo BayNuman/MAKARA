@@ -17,6 +17,7 @@ export const ProgressPanel: React.FC = () => {
 
   // Speed history local state for the live sparkline graph
   const [speedHistory, setSpeedHistory] = useState<number[]>(Array(60).fill(0));
+  const [showLogs, setShowLogs] = useState(false);
 
   const currentLang = preferences?.current_lang || 'en';
 
@@ -94,7 +95,6 @@ export const ProgressPanel: React.FC = () => {
         {/* Header Actions */}
         <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
           <div className="flex items-center gap-2">
-            <span className="panel-idx">04</span>
             <h2 className="text-xs font-semibold tracking-widest text-[var(--ink-dim)] uppercase font-mono">
               {getTranslation(currentLang, 'lbl_progress_title')}
             </h2>
@@ -107,6 +107,13 @@ export const ProgressPanel: React.FC = () => {
             >
               <Play className="h-3 w-3" />
               <span>{getTranslation(currentLang, 'btn_start_dl')}</span>
+            </button>
+            <button
+              onClick={() => setShowLogs(!showLogs)}
+              className={`flex items-center gap-1.5 rounded-[var(--radius)] border px-3.5 py-1.5 text-xs font-semibold active:scale-95 transition-all font-mono ${showLogs ? 'border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--accent)]' : 'border-[var(--hairline-strong)] bg-[var(--bg-recessed)] text-[var(--ink-faint)] hover:text-[var(--ink)]'}`}
+              title={getTranslation(currentLang, 'lbl_dev_console')}
+            >
+              <Terminal className="h-3 w-3" />
             </button>
             <button
               onClick={cancelDownloads}
@@ -181,7 +188,8 @@ export const ProgressPanel: React.FC = () => {
         </div>
 
         {/* Terminal Logs console */}
-        <div className="flex flex-col gap-2">
+        {showLogs && (
+          <div className="flex flex-col gap-2 animate-slide-in">
           <div className="flex items-center justify-between text-xs font-semibold text-[var(--ink-dim)]">
             <div className="flex items-center gap-1.5">
               <Terminal className="h-4 w-4 text-[var(--accent)]" />
@@ -218,7 +226,8 @@ export const ProgressPanel: React.FC = () => {
             )}
             <div ref={terminalEndRef} />
           </div>
-        </div>
+          </div>
+        )}
 
       </div>
     </div>

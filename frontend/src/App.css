@@ -183,12 +183,6 @@
   border-radius: 9999px;
 }
 
-/* ── Panel numbering style ── */
-.panel-idx {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--accent);
-}
 
 /* ── Topband bar ── */
 .topband {
