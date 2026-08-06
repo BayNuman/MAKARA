@@ -442,13 +442,6 @@ export const AdvancedPanel: React.FC = () => {
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_download_subs')}</span>
-                  <div 
-                    className={`toggle-sw ${preferences.subtitle_flag ? 'on' : ''}`}
-                    onClick={() => handleToggle('subtitle_flag')}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-[var(--ink)]">{getTranslation(currentLang, 'lbl_restrict_filenames')}</span>
                   <div 
                     className={`toggle-sw ${preferences.restrict_filenames ? 'on' : ''}`}
