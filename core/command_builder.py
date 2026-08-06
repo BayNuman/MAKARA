@@ -261,6 +261,11 @@ def build_command(item, output_dir: str) -> list[str]:
     # Protect against infinite TCP socket hangs on unstable/throttled connections
     cmd.extend(["--socket-timeout", "30"])
 
+    from core.downloader import resolve_ffmpeg_path
+    ffmpeg_bin = resolve_ffmpeg_path()
+    if ffmpeg_bin and ffmpeg_bin != "ffmpeg" and os.path.exists(ffmpeg_bin):
+        cmd.extend(["--ffmpeg-location", os.path.dirname(ffmpeg_bin)])
+
     concurrent_fragments = str(safe_get(item, "concurrent_fragments", "")).strip()
     if concurrent_fragments:
         cmd.extend(["--concurrent-fragments", concurrent_fragments])

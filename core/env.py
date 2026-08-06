@@ -44,7 +44,36 @@ def refresh_path_env() -> None:
                 if "deno.exe" in files or "node.exe" in files:
                     paths.append(root)
 
-        # 4. Filter empty/duplicate paths and update the active process environment
+        # 4. Search for bundled ffmpeg/ffprobe binaries and add their folder to PATH
+        try:
+            app_dir = os.path.dirname(sys.executable)
+            candidate_dirs = [
+                app_dir,
+                os.path.join(app_dir, "bin"),
+                os.path.join(app_dir, "resources"),
+                os.path.join(app_dir, "resources", "bin"),
+                os.path.abspath(os.path.join(app_dir, "..")),
+                os.path.abspath(os.path.join(app_dir, "..", "resources")),
+                os.path.abspath(os.path.join(app_dir, "..", "bin")),
+                os.path.abspath(os.path.join(app_dir, "_up_", "_up_", "bin")),
+                os.path.abspath(os.path.join(".", "bin"))
+            ]
+            for cd in candidate_dirs:
+                if os.path.exists(cd):
+                    fft = os.path.join(cd, "ffmpeg.exe" if sys.platform == "win32" else "ffmpeg")
+                    if os.path.exists(fft):
+                        paths.append(cd)
+
+            # Deep walk fallback in app_dir for resources
+            if os.path.exists(app_dir):
+                for root, dirs, files in os.walk(app_dir):
+                    if "ffmpeg.exe" in files or "ffmpeg" in files:
+                        paths.append(root)
+                        break
+        except Exception:
+            pass
+
+        # 5. Filter empty/duplicate paths and update the active process environment
         seen = set()
         cleaned_paths = []
         

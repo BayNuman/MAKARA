@@ -103,26 +103,46 @@ from core.clip import parse_time_to_seconds
 
 def resolve_ffmpeg_path() -> str:
     """Finds the ffmpeg binary, checking bundled paths or standard locations."""
+    target_name = "ffmpeg.exe" if os.name == "nt" else "ffmpeg"
+    
     # 1. Check PyInstaller temp directory (if bundled inside the EXE)
     try:
-        base_path = sys._MEIPASS
-        bundled = os.path.join(base_path, "ffmpeg.exe" if os.name == "nt" else "ffmpeg")
-        if os.path.exists(bundled):
-            return bundled
+        base_path = getattr(sys, "_MEIPASS", None)
+        if base_path:
+            bundled = os.path.join(base_path, target_name)
+            if os.path.exists(bundled):
+                return bundled
     except Exception:
         pass
 
-    # 2. Check directly next to the running executable (for installed Windows setups)
+    # 2. Check directly next to the running executable and Tauri candidate dirs
     try:
         app_dir = os.path.dirname(sys.executable)
-        adjacent = os.path.join(app_dir, "ffmpeg.exe" if os.name == "nt" else "ffmpeg")
-        if os.path.exists(adjacent):
-            return adjacent
+        candidates = [
+            app_dir,
+            os.path.join(app_dir, "bin"),
+            os.path.join(app_dir, "resources"),
+            os.path.join(app_dir, "resources", "bin"),
+            os.path.abspath(os.path.join(app_dir, "..")),
+            os.path.abspath(os.path.join(app_dir, "..", "resources")),
+            os.path.abspath(os.path.join(app_dir, "..", "bin")),
+            os.path.abspath(os.path.join(app_dir, "_up_", "_up_", "bin")),
+        ]
+        for c in candidates:
+            p = os.path.join(c, target_name)
+            if os.path.exists(p):
+                return p
+
+        # Deep walk fallback in app_dir for resources
+        if os.path.exists(app_dir):
+            for root, dirs, files in os.walk(app_dir):
+                if target_name in files:
+                    return os.path.join(root, target_name)
     except Exception:
         pass
 
     # 3. Check local bin directory (for development)
-    local_bin = Path(".") / "bin" / ("ffmpeg.exe" if os.name == "nt" else "ffmpeg")
+    local_bin = Path(".") / "bin" / target_name
     if local_bin.exists():
         return str(local_bin.resolve())
 
