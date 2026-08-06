@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { List, History, Play, Pause, Trash2, ExternalLink, FolderOpen, Calendar, HardDrive, ChevronDown } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 import { getTranslation } from '../i18n/translations';
+import { apiClient } from '../api/client';
 
 export const QueuePanel: React.FC = () => {
   const {
@@ -39,19 +40,24 @@ export const QueuePanel: React.FC = () => {
   }, [fetchQueue, fetchHistory, activeTab]);
 
   const handleOpenFolder = async (filePath: string) => {
-    const tauri = (window as any).__TAURI__;
-    if (tauri && tauri.shell) {
-      try {
-        const { open } = (window as any).__TAURI__.shell || {};
-        if (open) {
-          const dirPath = filePath.substring(0, filePath.lastIndexOf('\\')) || filePath.substring(0, filePath.lastIndexOf('/'));
-          await open(dirPath);
+    if (!filePath) return;
+    try {
+      await apiClient.post('/download/open-folder', { path: filePath });
+    } catch (err) {
+      const tauri = (window as any).__TAURI__;
+      if (tauri && tauri.shell) {
+        try {
+          const { open } = (window as any).__TAURI__.shell || {};
+          if (open) {
+            const dirPath = filePath.substring(0, filePath.lastIndexOf('\\')) || filePath.substring(0, filePath.lastIndexOf('/'));
+            await open(dirPath);
+            return;
+          }
+        } catch (e) {
+          // fallback
         }
-      } catch (err) {
-        addToast(getTranslation(currentLang, 'err_open_folder'), 'error');
       }
-    } else {
-      addToast(getTranslation(currentLang, 'msg_file_location') + filePath, 'info');
+      addToast(getTranslation(currentLang, 'err_open_folder'), 'error');
     }
   };
 
@@ -214,6 +220,15 @@ export const QueuePanel: React.FC = () => {
                     <div className="flex items-center justify-between border-t border-[var(--hairline)] pt-2 text-[10px] font-semibold text-[var(--ink-faint)]">
                       <span className="font-mono">Format: {task.preset}</span>
                       <div className="flex items-center gap-2.5">
+                        {(task.file_path || (task.status_code || '').toLowerCase() === 'finished' || (task.status_code || '').toLowerCase() === 'completed') && (
+                          <button
+                            onClick={() => handleOpenFolder(task.file_path || preferences?.output_dir || '')}
+                            className="text-[var(--accent)] hover:opacity-85 transition-opacity"
+                            title={getTranslation(currentLang, 'btn_open_folder')}
+                          >
+                            <FolderOpen className="h-4 w-4" />
+                          </button>
+                        )}
                         {(task.status_code || '').toLowerCase() === 'downloading' && (
                           <button
                             onClick={() => pauseTask(task.id)}

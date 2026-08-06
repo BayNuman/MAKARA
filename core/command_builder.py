@@ -20,18 +20,36 @@ def _cleanup_temp_files():
 atexit.register(_cleanup_temp_files)
 
 VIDEO_PRESET_HEIGHT = {
+    "best": "Best",
+    "Best": "Best",
     "Maksimum (Best)": "Best",
+    "Maksimum Kalite": "Best",
+    "2160": "2160",
+    "2160p": "2160",
     "Ultra HD (2160p)": "2160",
+    "1440": "1440",
+    "1440p": "1440",
     "QHD (1440p)": "1440",
+    "1080": "1080",
+    "1080p": "1080",
     "Full HD (1080p)": "1080",
+    "720": "720",
+    "720p": "720",
     "Dengeli (720p)": "720",
+    "480": "480",
+    "480p": "480",
     "Hizli (480p)": "480",
+    "360": "360",
+    "360p": "360",
     "Ekonomi (360p)": "360",
+    "CUSTOM": "CUSTOM",
+    "Custom": "CUSTOM",
     "Ozel (Custom)": "CUSTOM",
 }
 
 AUDIO_PRESET_QUALITY = {
     "Best": "0",
+    "best": "0",
     "Yuksek (320K)": "320K",
     "Dengeli (192K)": "192K",
     "Kucuk Boyut (128K)": "128K",
@@ -107,17 +125,23 @@ def sanitize_extra_args(extra_args_str: str) -> list[str]:
     return sanitized_parts
 
 def effective_video_height(item) -> Optional[int]:
-    selected = VIDEO_PRESET_HEIGHT.get(safe_get(item, "video_profile"), "1080")
-    if selected == "CUSTOM":
-        val = safe_get(item, "video_limit", "1080")
+    raw_profile = str(safe_get(item, "video_profile", "best")).strip()
+    selected = VIDEO_PRESET_HEIGHT.get(raw_profile, raw_profile)
+    
+    if selected.upper() == "CUSTOM":
+        val = str(safe_get(item, "video_limit", "1080")).strip()
     else:
         val = selected
         
-    if val == "Best" or not val:
+    if not val or val.lower() in ("best", "maksimum (best)", "maksimum kalite", "max", "none"):
         return None
     try:
         return int(val)
     except (ValueError, TypeError):
+        import re
+        digits = re.sub(r"[^\d]", "", val)
+        if digits:
+            return int(digits)
         return 1080
 
 def build_command(item, output_dir: str) -> list[str]:
@@ -136,6 +160,8 @@ def build_command(item, output_dir: str) -> list[str]:
             output_template = "%(ext)s/%(title).70s [%(id)s].%(ext)s"
         elif folder_org == "Channel_Year":
             output_template = "%(uploader).30s/%(upload_date>%Y)s/%(title).70s [%(id)s].%(ext)s"
+        elif folder_org == "Playlist":
+            output_template = "%(playlist_title,playlist)s/%(title).70s [%(id)s].%(ext)s"
         else:
             output_template = DEFAULT_OUTPUT_TEMPLATE
     else:
@@ -143,11 +169,10 @@ def build_command(item, output_dir: str) -> list[str]:
         
     cmd: list[str] = [sys.executable, "-m", "yt_dlp", "--newline", "--legacy-server-connect", "-P", out_dir, "-o", output_template]
 
-    # If pre-fetched metadata exists (Multi-Clip Single-Fetch), inject it to avoid double-fetching network calls
-    video_info = safe_get(item, "video_info")
-    if video_info:
+    # Pre-dump metadata if cached json exists
+    video_info = safe_get(item, "_video_info")
+    if video_info and isinstance(video_info, dict):
         try:
-            # Create a temporary file inside our isolated scratch directory to write cached JSON metadata
             scratch_path = Path.home() / ".yt-downloader-scratch"
             scratch_path.mkdir(parents=True, exist_ok=True)
             
@@ -160,7 +185,6 @@ def build_command(item, output_dir: str) -> list[str]:
             )
             json.dump(video_info, temp_json, ensure_ascii=False)
             temp_json.close()
-            # Cache the temp path so downloader can clean it up
             safe_set(item, "_temp_info_json", temp_json.name)
             cmd.extend(["--load-info-json", temp_json.name])
         except Exception as e:
@@ -192,12 +216,13 @@ def build_command(item, output_dir: str) -> list[str]:
         )
         cmd.extend(["-f", selector, "--merge-output-format", safe_get(item, "video_container", "mp4")])
     else:
-        audio_quality = AUDIO_PRESET_QUALITY.get(safe_get(item, "audio_quality", "Best"), "0")
+        raw_aq = str(safe_get(item, "audio_quality", "Best")).strip()
+        audio_quality = AUDIO_PRESET_QUALITY.get(raw_aq, raw_aq if raw_aq.endswith("K") or raw_aq.isdigit() else "0")
         cmd.extend(["-x", "--audio-format", safe_get(item, "audio_format", "mp3"), "--audio-quality", audio_quality])
 
     if not safe_get(item, "playlist"):
         cmd.append("--no-playlist")
-    if safe_get(item, "metadata"):
+    if safe_get(item, "metadata") or safe_get(item, "metadata_flag"):
         cmd.append("--add-metadata")
     if safe_get(item, "thumbnail_flag"):
         cmd.append("--embed-thumbnail")
@@ -219,18 +244,21 @@ def build_command(item, output_dir: str) -> list[str]:
                 expanded_langs.append(pattern2)
     final_sub_langs = ",".join(expanded_langs)
 
-    if safe_get(item, "subs") or safe_get(item, "auto_subs"):
+    has_subs = safe_get(item, "subs") or safe_get(item, "subtitle_flag")
+    has_auto_subs = safe_get(item, "auto_subs") or safe_get(item, "auto_subtitle_flag")
+
+    if has_subs or has_auto_subs:
         cmd.append("--ignore-errors")
-    if safe_get(item, "subs"):
+    if has_subs:
         cmd.extend(["--write-subs", "--sub-langs", final_sub_langs, "--convert-subs", "srt"])
-    if safe_get(item, "auto_subs"):
+    if has_auto_subs:
         cmd.extend(["--write-auto-subs", "--sub-langs", final_sub_langs, "--convert-subs", "srt"])
-    if (safe_get(item, "subs") or safe_get(item, "auto_subs")) and safe_get(item, "embed_subs", True):
+    if (has_subs or has_auto_subs) and safe_get(item, "embed_subs", True):
         cmd.append("--embed-subs")
-    if safe_get(item, "restrict_names") or (folder_org and folder_org != "None"):
+    if safe_get(item, "restrict_names") or safe_get(item, "restrict_filenames") or (folder_org and folder_org != "None"):
         cmd.append("--restrict-filenames")
 
-    if safe_get(item, "sponsorblock"):
+    if safe_get(item, "sponsorblock") or safe_get(item, "sponsorblock_enabled"):
         cmd.extend(["--sponsorblock-remove", "all"])
 
     playlist_items = str(safe_get(item, "playlist_items", "")).strip()

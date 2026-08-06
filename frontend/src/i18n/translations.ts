@@ -304,6 +304,12 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_help: "Create an app at developer.spotify.com to get your keys.",
     lbl_allow_redownload: "Allow Re-downloading Previously Downloaded Items",
     toast_archive_skipped: "Skipped: '{title}' was downloaded before. Enable 'Allow Re-downloading' in Advanced Settings to download again in a different format.",
+    lbl_folder_organization: "Automatic Folder Organization",
+    opt_folder_org_none: "Default Output Folder (Flat)",
+    opt_folder_org_playlist: "📁 Create Subfolder by Playlist Name",
+    opt_folder_org_channel: "📁 Create Subfolder by Channel Name",
+    opt_folder_org_year: "📁 Organize Subfolders by Year",
+    opt_folder_org_format: "📁 Organize Subfolders by Format (MP3/MP4)",
 
     // Subtitle & Translation Tab & Playlist Keys
     tab_subtitles: "💬 Subtitles & Translation",
@@ -649,6 +655,12 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_help: "Anahtarlarınızı almak için developer.spotify.com adresinde bir uygulama oluşturun.",
     lbl_allow_redownload: "Daha Önce İndirilenleri Tekrar İndirmeye İzin Ver",
     toast_archive_skipped: "Atlandı: '{title}' daha önce indirilmiş. Farklı formatta tekrar indirmek için Gelişmiş Ayarlar'dan 'Daha Önce İndirilenleri Tekrar İndirmeye İzin Ver' seçeneğini açabilirsiniz.",
+    lbl_folder_organization: "Otomatik Klasör Yapılandırması",
+    opt_folder_org_none: "Varsayılan Klasör Yapısı (Düz Düzen)",
+    opt_folder_org_playlist: "📁 Çalma Listesi Adıyla Otomatik Klasör Oluştur",
+    opt_folder_org_channel: "📁 Kanal Adıyla Otomatik Klasör Oluştur",
+    opt_folder_org_year: "📁 Yıla Göre Otomatik Klasörle",
+    opt_folder_org_format: "📁 Formata Göre Klasörle (MP3/MP4)",
 
     // Subtitle & Translation Tab & Playlist Keys in TR
     tab_subtitles: "💬 Altyazı & Çeviri",
@@ -994,6 +1006,12 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     lbl_spotify_help: "Cree una app en developer.spotify.com para obtener sus claves.",
     lbl_allow_redownload: "Permitir Redescarga de Elementos Anteriores",
     toast_archive_skipped: "Omitido: '{title}' ya se había descargado. Active 'Permitir Redescarga' en Ajustes Avanzados para volver a descargarlo en otro formato.",
+    lbl_folder_organization: "Organización Automática de Carpetas",
+    opt_folder_org_none: "Carpeta por Defecto (Plano)",
+    opt_folder_org_playlist: "📁 Crear Subcarpeta con Nombre de la Lista",
+    opt_folder_org_channel: "📁 Crear Subcarpeta con Nombre del Canal",
+    opt_folder_org_year: "📁 Organizar Subcarpetas por Año",
+    opt_folder_org_format: "📁 Organizar Subcarpetas por Formato (MP3/MP4)",
 
     // Subtitle & Translation Tab & Playlist Keys in ES
     tab_subtitles: "💬 Subtítulos y Traducción",

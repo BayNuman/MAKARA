@@ -550,23 +550,42 @@ export const AdvancedPanel: React.FC = () => {
                 </div>
               </div>
 
-              {/* Speed Limiter */}
-              <div className="flex flex-col gap-1.5 border-t border-[var(--hairline)] pt-4">
-                <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
-                  {getTranslation(currentLang, 'lbl_bandwidth_limiter')}
-                </label>
-                <select
-                  value={preferences.speed_limit || 'unlimited'}
-                  onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
-                  className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
-                >
-                  <option value="unlimited" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_unlimited')}</option>
-                  <option value="1M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_1m')}</option>
-                  <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
-                  <option value="5M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_5m')}</option>
-                  <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
-                  <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
-                </select>
+              {/* Speed Limiter & Folder Org */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[var(--hairline)] pt-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
+                    {getTranslation(currentLang, 'lbl_bandwidth_limiter')}
+                  </label>
+                  <select
+                    value={preferences.speed_limit || 'unlimited'}
+                    onChange={(e) => handleValueChange('speed_limit', e.target.value === 'unlimited' ? null : e.target.value)}
+                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
+                  >
+                    <option value="unlimited" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_unlimited')}</option>
+                    <option value="1M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_1m')}</option>
+                    <option value="3M" className="bg-[var(--bg-elevated)]">3 MB/s</option>
+                    <option value="5M" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_speed_5m')}</option>
+                    <option value="10M" className="bg-[var(--bg-elevated)]">10 MB/s</option>
+                    <option value="25M" className="bg-[var(--bg-elevated)]">25 MB/s</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-mono tracking-widest text-[var(--ink-faint)] uppercase px-1">
+                    {getTranslation(currentLang, 'lbl_folder_organization')}
+                  </label>
+                  <select
+                    value={preferences.folder_org || 'None'}
+                    onChange={(e) => handleValueChange('folder_org', e.target.value)}
+                    className="rounded-[var(--radius)] border border-[var(--hairline-strong)] bg-[var(--bg-recessed)] px-3.5 py-2.5 text-xs font-semibold outline-none text-[var(--ink)] cursor-pointer"
+                  >
+                    <option value="None" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_folder_org_none')}</option>
+                    <option value="Playlist" className="bg-[var(--bg-elevated)] text-[var(--accent)]">{getTranslation(currentLang, 'opt_folder_org_playlist')}</option>
+                    <option value="Channel" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_folder_org_channel')}</option>
+                    <option value="Year" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_folder_org_year')}</option>
+                    <option value="Format" className="bg-[var(--bg-elevated)]">{getTranslation(currentLang, 'opt_folder_org_format')}</option>
+                  </select>
+                </div>
               </div>
 
 
