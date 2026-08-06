@@ -162,7 +162,9 @@ export const UrlPanel: React.FC = () => {
     
     // settings for the downloads
     const settings = {
+      ...preferences,
       mode: 'Audio', // default to Audio for Spotify downloads
+      audio_format: preferences?.custom_settings?.audio_format || (preferences as any)?.audio_format || 'mp3',
       active_profile: preferences?.active_profile || 'best'
     };
     
@@ -192,7 +194,9 @@ export const UrlPanel: React.FC = () => {
     }
 
     const settings = {
+      ...preferences,
       mode: preferences?.mode || 'Video',
+      audio_format: preferences?.custom_settings?.audio_format || (preferences as any)?.audio_format || 'mp3',
       active_profile: preferences?.active_profile || 'best'
     };
 
