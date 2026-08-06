@@ -27,7 +27,7 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
 
     if cookies_file:
         ydl_opts['cookiefile'] = cookies_file
-    elif browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none"):
+    elif browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none", "auto"):
         ydl_opts['cookiesfrombrowser'] = (browser_cookies,)
 
     info = None
@@ -37,6 +37,20 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
             info = ydl.extract_info(url, download=False)
     except Exception as e:
         print(f"[Services] Direct URL metadata extraction warning: {e}")
+
+    # Stage 1b: If auto mode enabled and direct extraction failed, try browser fallback loop
+    if not info and browser_cookies == "auto":
+        for b in ["edge", "firefox", "brave", "opera", "vivaldi", "chrome"]:
+            try:
+                auto_opts = dict(ydl_opts)
+                auto_opts['cookiesfrombrowser'] = (b,)
+                with yt_dlp.YoutubeDL(auto_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                if info:
+                    print(f"[Services] Auto metadata fetch succeeded using browser '{b}'")
+                    break
+            except Exception as e:
+                print(f"[Services] Auto browser '{b}' metadata extraction warning: {e}")
 
     # Stage 2: If direct extraction produced no entries and a playlist ID exists, try normalized playlist URL
     playlist_match = re.search(r'[?&]list=([a-zA-Z0-9_-]+)', url)

@@ -270,7 +270,7 @@ def build_command(item, output_dir: str) -> list[str]:
         cmd.extend(["--cookies", cookies_file])
     else:
         browser_cookies = str(safe_get(item, "browser_cookies", "")).strip().lower()
-        if browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none"):
+        if browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none", "auto"):
             cmd.extend(["--cookies-from-browser", browser_cookies])
 
     if safe_get(item, "clip_enabled"):
