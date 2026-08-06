@@ -200,9 +200,7 @@ def build_command(item, output_dir: str) -> list[str]:
     if safe_get(item, "metadata"):
         cmd.append("--add-metadata")
     if safe_get(item, "thumbnail_flag"):
-        cmd.extend(["--write-thumbnail", "--convert-thumbnails", "jpg"])
-        if mode == "Audio":
-            cmd.append("--embed-thumbnail")
+        cmd.append("--embed-thumbnail")
     sub_langs = str(safe_get(item, "sub_langs", "tr,en")).strip()
     if not sub_langs:
         sub_langs = "tr,en"
