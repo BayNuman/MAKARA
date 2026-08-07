@@ -20,10 +20,16 @@ def fetch_video_metadata(url: str, cookies_file: str, browser_cookies: str, scra
         'quiet': True,
         'no_warnings': True,
         'legacyserverconnect': True,
+        'extractor_args': {'youtube': {'player_client': ['ios', 'android_vr', 'web']}},
     }
 
     if 'list=' in url:
         ydl_opts['extract_flat'] = 'in_playlist'
+
+    if not cookies_file:
+        synced_cookies = app_data_dir / "user_cookies.txt"
+        if synced_cookies.exists() and synced_cookies.stat().st_size > 0:
+            cookies_file = str(synced_cookies)
 
     if cookies_file:
         ydl_opts['cookiefile'] = cookies_file
