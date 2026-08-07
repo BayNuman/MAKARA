@@ -57,29 +57,34 @@ async def open_file_folder(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any
     import subprocess
     from pathlib import Path
 
-    path_str = payload.get("path")
+    path_str = str(payload.get("path", "")).strip()
     if not path_str:
         raise HTTPException(status_code=400, detail="Path is required")
         
     p = Path(path_str).expanduser()
-    if p.is_file():
-        folder = p.parent
-    else:
-        folder = p
-        
-    if not folder.exists():
-        folder = Path.home() / "Desktop"
-        
+    
     try:
         if os.name == "nt":
-            if p.is_file() and p.exists():
-                subprocess.Popen(f'explorer /select,"{p}"', shell=True)
+            norm_path = os.path.normpath(str(p))
+            if os.path.isfile(norm_path):
+                # File exists -> open explorer and highlight the exact file!
+                subprocess.Popen(f'explorer /select,"{norm_path}"', shell=True)
+            elif os.path.exists(norm_path):
+                # Path is a directory -> open folder directly
+                os.startfile(norm_path)
             else:
-                os.startfile(str(folder))
+                # File was moved or doesn't exist directly, check parent folder
+                parent = os.path.dirname(norm_path)
+                if os.path.exists(parent):
+                    os.startfile(parent)
+                else:
+                    os.startfile(str(Path.home() / "Desktop"))
         elif sys.platform == "darwin":
-            subprocess.Popen(["open", str(folder)])
+            folder = str(p.parent) if p.is_file() else str(p)
+            subprocess.Popen(["open", folder])
         else:
-            subprocess.Popen(["xdg-open", str(folder)])
+            folder = str(p.parent) if p.is_file() else str(p)
+            subprocess.Popen(["xdg-open", folder])
         return {"success": True, "detail": "Opened folder location."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

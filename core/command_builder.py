@@ -161,9 +161,20 @@ def build_command(item, output_dir: str) -> list[str]:
         elif folder_org == "Channel_Year":
             output_template = "%(uploader).30s/%(upload_date>%Y)s/%(title).70s [%(id)s].%(ext)s"
         elif folder_org == "Playlist":
-            output_template = "%(playlist_title,playlist)s/%(title).70s [%(id)s].%(ext)s"
+            custom_title = safe_get(item, "playlist_title")
+            if custom_title:
+                import re
+                safe_folder = re.sub(r'[\\/:*?"<>|]', '_', str(custom_title)).strip()
+                output_template = f"{safe_folder}/%(title).70s [%(id)s].%(ext)s"
+            else:
+                output_template = "%(playlist_title,playlist,Music_Playlist)s/%(title).70s [%(id)s].%(ext)s"
         else:
             output_template = DEFAULT_OUTPUT_TEMPLATE
+    elif safe_get(item, "playlist_title"):
+        import re
+        custom_title = safe_get(item, "playlist_title")
+        safe_folder = re.sub(r'[\\/:*?"<>|]', '_', str(custom_title)).strip()
+        output_template = f"{safe_folder}/%(title).70s [%(id)s].%(ext)s"
     else:
         output_template = str(safe_get(item, "output_template", "")).strip() or DEFAULT_OUTPUT_TEMPLATE
         

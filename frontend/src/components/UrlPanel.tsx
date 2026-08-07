@@ -23,6 +23,7 @@ export const UrlPanel: React.FC = () => {
   const [spotifyTracks, setSpotifyTracks] = useState<Array<{ name: string; artists: string; duration: number; thumbnail: string }>>([]);
   const [spotifyLoading, setSpotifyLoading] = useState(false);
   const [selectedTracks, setSelectedTracks] = useState<Record<number, boolean>>({});
+  const [spotifyPlaylistTitle, setSpotifyPlaylistTitle] = useState<string>('Spotify Playlist');
 
   // YouTube Playlist entries local selection state
   const [selectedYtEntries, setSelectedYtEntries] = useState<Record<number, boolean>>({});
@@ -136,6 +137,7 @@ export const UrlPanel: React.FC = () => {
       const res = await apiClient.post('/spotify/playlist-tracks', { url: trimmedUrl });
       if (res.data && Array.isArray(res.data.tracks)) {
         setSpotifyTracks(res.data.tracks);
+        setSpotifyPlaylistTitle(res.data.playlist_title || 'Spotify Playlist');
         // select all by default
         const initialSelects: Record<number, boolean> = {};
         res.data.tracks.forEach((_: any, idx: number) => {
@@ -165,7 +167,9 @@ export const UrlPanel: React.FC = () => {
       ...preferences,
       mode: 'Audio', // default to Audio for Spotify downloads
       audio_format: preferences?.custom_settings?.audio_format || (preferences as any)?.audio_format || 'mp3',
-      active_profile: preferences?.active_profile || 'best'
+      active_profile: preferences?.active_profile || 'best',
+      playlist_title: spotifyPlaylistTitle,
+      folder_org: preferences?.folder_org === 'None' || !preferences?.folder_org ? 'Playlist' : preferences.folder_org
     };
     
     let addedCount = 0;
@@ -193,11 +197,14 @@ export const UrlPanel: React.FC = () => {
       return;
     }
 
+    const ytTitle = metadataState.data?.title || 'YouTube Playlist';
     const settings = {
       ...preferences,
       mode: preferences?.mode || 'Video',
       audio_format: preferences?.custom_settings?.audio_format || (preferences as any)?.audio_format || 'mp3',
-      active_profile: preferences?.active_profile || 'best'
+      active_profile: preferences?.active_profile || 'best',
+      playlist_title: ytTitle,
+      folder_org: preferences?.folder_org === 'None' || !preferences?.folder_org ? 'Playlist' : preferences.folder_org
     };
 
     let addedCount = 0;

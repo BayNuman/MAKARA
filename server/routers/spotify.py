@@ -15,7 +15,7 @@ router = APIRouter(
     dependencies=[Depends(verify_token)]
 )
 
-def fetch_spotify_tracks_from_embed(playlist_id: str) -> list:
+def fetch_spotify_tracks_from_embed(playlist_id: str) -> dict:
     """Fallback parser that extracts tracks from Spotify embed page without requiring API keys."""
     url = f"https://open.spotify.com/embed/playlist/{playlist_id}"
     headers = {
@@ -31,6 +31,7 @@ def fetch_spotify_tracks_from_embed(playlist_id: str) -> list:
         
     data = json.loads(match.group(1).strip())
     entity = data.get("props", {}).get("pageProps", {}).get("state", {}).get("data", {}).get("entity", {})
+    playlist_title = entity.get("title") or entity.get("name") or "Spotify Playlist"
     track_list = entity.get("trackList", [])
     
     tracks = []
@@ -53,9 +54,9 @@ def fetch_spotify_tracks_from_embed(playlist_id: str) -> list:
                 "thumbnail": thumb_url
             })
             
-    return tracks
+    return {"tracks": tracks, "playlist_title": playlist_title}
 
-def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -> list:
+def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -> dict:
     if client_id and client_secret:
         try:
             # 1. Fetch access token via Spotify Web API
@@ -76,13 +77,24 @@ def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -
                 token_data = json.loads(res.read().decode('utf-8'))
                 access_token = token_data["access_token"]
 
-            # 2. Fetch tracks
-            tracks = []
-            next_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=100"
+            # 2. Fetch tracks and playlist name
             tracks_headers = {
                 "Authorization": f"Bearer {access_token}",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
+            
+            playlist_title = "Spotify Playlist"
+            try:
+                pl_url = f"https://api.spotify.com/v1/playlists/{playlist_id}?fields=name"
+                pl_req = urllib.request.Request(pl_url, headers=tracks_headers)
+                with urllib.request.urlopen(pl_req, timeout=5) as pl_res:
+                    pl_data = json.loads(pl_res.read().decode('utf-8'))
+                    playlist_title = pl_data.get("name", "Spotify Playlist")
+            except Exception:
+                pass
+
+            tracks = []
+            next_url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=100"
             
             while next_url and len(tracks) < 300:
                 req = urllib.request.Request(next_url, headers=tracks_headers)
@@ -111,7 +123,7 @@ def fetch_spotify_tracks(playlist_id: str, client_id: str, client_secret: str) -
                         })
                     next_url = res_data.get("next")
             if tracks:
-                return tracks
+                return {"tracks": tracks, "playlist_title": playlist_title}
         except Exception as api_err:
             pass # Fallback to embed scraper below
 
@@ -137,8 +149,8 @@ async def get_playlist_tracks(req_body: SpotifyTracksRequest, request: Request):
     
     try:
         # Run blocking network requests in a separate thread
-        tracks = await asyncio.to_thread(fetch_spotify_tracks, playlist_id, client_id, client_secret)
-        return {"tracks": tracks}
+        result = await asyncio.to_thread(fetch_spotify_tracks, playlist_id, client_id, client_secret)
+        return result
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
