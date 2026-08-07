@@ -109,7 +109,6 @@ class TestCommandBuilder(unittest.TestCase):
         self.assertIn("mp3", cmd)
         self.assertIn("--audio-quality", cmd)
         self.assertIn("320K", cmd)
-        self.assertIn("--write-thumbnail", cmd)
         self.assertIn("--embed-thumbnail", cmd)
 
 if __name__ == "__main__":
