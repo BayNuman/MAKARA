@@ -49,6 +49,14 @@ export const UrlPanel: React.FC = () => {
     }
   }, [preferences]);
 
+  // Sync auto-detected clipboard URL into input field
+  const { lastCopiedUrl } = useAppStore();
+  useEffect(() => {
+    if (lastCopiedUrl) {
+      setUrl(lastCopiedUrl);
+    }
+  }, [lastCopiedUrl]);
+
   // Debounced auto-fetch video metadata on URL paste/type
   useEffect(() => {
     if (debounceTimerRef.current) {
