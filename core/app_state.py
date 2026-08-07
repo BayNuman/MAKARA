@@ -65,6 +65,8 @@ class DownloadTask:
     export_profile: str = "Default (No Profile)"
     merge_clips: bool = False
     clip_strategy: str = "stream_seek"
+    auto_shorts: bool = False
+    crop_vertical: bool = False
     macro_clips_data: Optional[List[dict]] = None
     video_info: Optional[dict] = None
 

@@ -668,6 +668,15 @@ def download_single_task(task: DownloadTask, state: AppState, emitter: EventEmit
         return
 
     _set_downloading_status(task, lang, emitter)
+
+    if (getattr(task, "auto_shorts", False) or getattr(task, "crop_vertical", False)) and not getattr(task, "video_info", None):
+        try:
+            from core.services import fetch_metadata
+            info_dict = fetch_metadata(task.url, browser_cookies=getattr(task, "browser_cookies", "auto"))
+            task.video_info = info_dict
+        except Exception as meta_err:
+            emitter.emit(AppEvent(EventKind.LOG, f"[{task.title}] Heatmap metadata fetch warning: {meta_err}\n"))
+
     cmd = build_command(task, state.output_dir)
     _log_start(task, cmd, emitter)
 
