@@ -370,7 +370,7 @@ def build_command(item, output_dir: str) -> list[str]:
         cmd.extend([
             "--download-sections", f"*{start_sec}-{end_sec}",
             "--force-keyframes-at-cuts",
-            "--postprocessor-args", f"ffmpeg:-ss {start_sec} -to {end_sec} -vf crop=ih*9/16:ih -avoid_negative_ts make_zero"
+            "--postprocessor-args", f"ffmpeg:-c:v libx264 -crf 20 -preset fast -vf crop=ih*9/16:ih -c:a aac -avoid_negative_ts make_zero"
         ])
     elif safe_get(item, "clip_enabled"):
         clip_strategy = safe_get(item, "clip_strategy", "stream_seek")
