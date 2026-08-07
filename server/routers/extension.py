@@ -32,7 +32,8 @@ async def sync_cookies_from_extension(payload: CookieSyncRequest, request: Reque
         # Also update global preferences if needed
         controller = request.app.state.server.controller
         controller.state.preferences.browser_cookies = str(cookie_file)
-        controller.save_state()
+        from core.app_state import save_app_preferences
+        save_app_preferences(controller.state.preferences)
         
         return {
             "success": True,
