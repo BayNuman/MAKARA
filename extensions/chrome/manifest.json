@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Makara Pro Companion",
-  "version": "2.2.0",
-  "description": "One-click media downloader companion for Makara Pro desktop app.",
+  "version": "2.5.5",
+  "description": "One-click media downloader & cookie sync companion for Makara Pro desktop app.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -18,10 +18,29 @@
   "permissions": [
     "activeTab",
     "contextMenus",
-    "storage"
+    "storage",
+    "cookies"
   ],
   "host_permissions": [
     "http://127.0.0.1:8765/*",
-    "http://localhost:8765/*"
+    "http://localhost:8765/*",
+    "*://*.youtube.com/*",
+    "*://youtube.com/*",
+    "*://*.spotify.com/*",
+    "*://*.instagram.com/*",
+    "*://*.tiktok.com/*",
+    "*://*.twitter.com/*",
+    "*://*.x.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
   ]
 }

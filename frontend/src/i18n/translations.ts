@@ -310,6 +310,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     opt_folder_org_channel: "📁 Create Subfolder by Channel Name",
     opt_folder_org_year: "📁 Organize Subfolders by Year",
     opt_folder_org_format: "📁 Organize Subfolders by Format (MP3/MP4)",
+    lbl_extension_cookie_sync: "Browser Extension Cookie Sync (App-Bound Encryption Bypass)",
+    lbl_auto_shorts: "Autonomous Social Media Clipper (YouTube Heatmap 9:16 Shorts)",
 
     // Subtitle & Translation Tab & Playlist Keys
     tab_subtitles: "💬 Subtitles & Translation",
@@ -661,6 +663,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     opt_folder_org_channel: "📁 Kanal Adıyla Otomatik Klasör Oluştur",
     opt_folder_org_year: "📁 Yıla Göre Otomatik Klasörle",
     opt_folder_org_format: "📁 Formata Göre Klasörle (MP3/MP4)",
+    lbl_extension_cookie_sync: "Tarayıcı Eklentisi Çerez Senkronizasyonu (Chrome 127+ Bypass)",
+    lbl_auto_shorts: "Otonom Sosyal Medya Kırpıcısı (YouTube Heatmap 9:16 Shorts)",
 
     // Subtitle & Translation Tab & Playlist Keys in TR
     tab_subtitles: "💬 Altyazı & Çeviri",
@@ -1012,6 +1016,8 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     opt_folder_org_channel: "📁 Crear Subcarpeta con Nombre del Canal",
     opt_folder_org_year: "📁 Organizar Subcarpetas por Año",
     opt_folder_org_format: "📁 Organizar Subcarpetas por Formato (MP3/MP4)",
+    lbl_extension_cookie_sync: "Sincronización de Cookies de Extensión (Bypass Chrome 127+)",
+    lbl_auto_shorts: "Recortador Autónomo para Redes Sociales (Heatmap 9:16 Shorts)",
 
     // Subtitle & Translation Tab & Playlist Keys in ES
     tab_subtitles: "💬 Subtítulos y Traducción",

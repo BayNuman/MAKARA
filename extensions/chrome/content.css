@@ -1,0 +1,59 @@
+/* Makara Pro Injected Button Styles */
+.makara-btn-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  vertical-align: middle;
+  z-index: 9999;
+}
+
+.makara-inject-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(230, 81, 0, 0.9), rgba(216, 67, 21, 0.95));
+  color: #ffffff;
+  font-family: "Roboto", "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.makara-inject-btn:hover {
+  background: linear-gradient(135deg, rgba(245, 124, 0, 1), rgba(230, 81, 0, 1));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 81, 0, 0.4);
+}
+
+.makara-inject-btn:active {
+  transform: translateY(0);
+}
+
+.makara-inject-btn.shorts-btn {
+  background: linear-gradient(135deg, rgba(123, 31, 162, 0.9), rgba(156, 39, 176, 0.95));
+}
+
+.makara-inject-btn.shorts-btn:hover {
+  background: linear-gradient(135deg, rgba(142, 36, 170, 1), rgba(123, 31, 162, 1));
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.4);
+}
+
+.makara-inject-btn.success {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20) !important;
+}
+
+.makara-inject-btn.error {
+  background: linear-gradient(135deg, #c62828, #b71c1c) !important;
+}
+
+.makara-btn-icon {
+  font-size: 14px;
+}

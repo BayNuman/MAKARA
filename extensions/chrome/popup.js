@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modeSelect = document.getElementById("modeSelect");
   const profileSelect = document.getElementById("profileSelect");
   const downloadBtn = document.getElementById("downloadBtn");
+  const syncCookiesBtn = document.getElementById("syncCookiesBtn");
   const toastMsg = document.getElementById("toastMsg");
 
   let currentTabUrl = "";
@@ -16,12 +17,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(`${API_BASE}/extension/ping`, { method: "GET" });
       if (res.ok) {
         statusDot.classList.add("connected");
-        statusDot.title = "Connected to Desktop App";
+        statusDot.title = "Makara Pro Masaüstü Uygulaması Bağlı";
         return true;
       }
     } catch (e) {
       statusDot.classList.remove("connected");
-      statusDot.title = "Desktop App Offline (Launch yt-dlp Pro)";
+      statusDot.title = "Masaüstü Uygulaması Çevrimdışı (Makara Pro'yu Başlatın)";
     }
     return false;
   }
@@ -38,12 +39,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (currentTabUrl.startsWith("http://") || currentTabUrl.startsWith("https://")) {
         downloadBtn.disabled = !isConnected;
       } else {
-        activeUrlEl.textContent = "Non-media page (chrome:// or local file)";
+        activeUrlEl.textContent = "Medya sayfası değil (chrome:// veya yerel dosya)";
         downloadBtn.disabled = true;
       }
     }
   } catch (err) {
-    activeUrlEl.textContent = "Could not detect active tab URL.";
+    activeUrlEl.textContent = "Aktif sekme URL'si alınamadı.";
     downloadBtn.disabled = true;
   }
 
@@ -52,10 +53,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!currentTabUrl) return;
 
     downloadBtn.disabled = true;
-    downloadBtn.querySelector("span").textContent = "⏳ Adding Task...";
+    downloadBtn.querySelector("span").textContent = "⏳ Kuyruğa Ekleniyor...";
 
-    const mode = modeSelect.value;
+    const modeValue = modeSelect.value;
     const profile = profileSelect.value;
+
+    const settings = {
+      mode: modeValue === "Audio" ? "Audio" : "Video"
+    };
+
+    if (modeValue === "Shorts") {
+      settings.auto_shorts = true;
+      settings.crop_vertical = true;
+    }
 
     try {
       const res = await fetch(`${API_BASE}/extension/add`, {
@@ -64,23 +74,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({
           url: currentTabUrl,
           profile: profile,
-          settings: {
-            mode: mode
-          }
+          settings: settings
         })
       });
 
       if (res.ok) {
-        showToast("✅ Task enqueued to Desktop App!", "success");
+        showToast("✅ Görev Masaüstü Uygulamasına Eklendi!", "success");
       } else {
         const errData = await res.json().catch(() => ({}));
-        showToast(`❌ Error: ${errData.detail || "Failed to add task"}`, "error");
+        showToast(`❌ Hata: ${errData.detail || "Görev eklenemedi"}`, "error");
       }
     } catch (err) {
-      showToast("❌ Could not connect to Desktop App.", "error");
+      showToast("❌ Masaüstü uygulamasına bağlanılamadı.", "error");
     } finally {
       downloadBtn.disabled = false;
-      downloadBtn.querySelector("span").textContent = "📥 Enqueue to Desktop App";
+      downloadBtn.querySelector("span").textContent = "⚡ Makara Pro'ya Gönder";
+    }
+  });
+
+  // 4. Handle Cookie Sync Button Click
+  syncCookiesBtn.addEventListener("click", async () => {
+    syncCookiesBtn.disabled = true;
+    syncCookiesBtn.querySelector("span").textContent = "⏳ Çerezler Çekiliyor...";
+
+    try {
+      const res = await chrome.runtime.sendMessage({ action: "sync_cookies" });
+      if (res && res.success) {
+        showToast(`✅ ${res.count || 0} Çerez Başarıyla Senkronize Edildi!`, "success");
+      } else {
+        showToast(`❌ Çerez Senkronizasyonu Hata: ${res?.detail || "Başarısız"}`, "error");
+      }
+    } catch (err) {
+      showToast("❌ Çerez senkronizasyonu başarısız.", "error");
+    } finally {
+      syncCookiesBtn.disabled = false;
+      syncCookiesBtn.querySelector("span").textContent = "🍪 Çerezleri Senkronize Et (Bypass Auth)";
     }
   });
 

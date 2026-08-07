@@ -124,6 +124,49 @@ def sanitize_extra_args(extra_args_str: str) -> list[str]:
         
     return sanitized_parts
 
+def extract_heatmap_peak_window(video_info: Optional[dict], target_duration: float = 60.0) -> tuple[float, float]:
+    """Scans YouTube heatmap data points to find the peak engagement 60-second window."""
+    if not video_info or not isinstance(video_info, dict):
+        return (0.0, target_duration)
+        
+    heatmap = video_info.get("heatmap")
+    duration = float(video_info.get("duration") or 0.0)
+    
+    if not heatmap or not isinstance(heatmap, list) or len(heatmap) == 0:
+        if duration > 120.0:
+            mid = duration / 2.0
+            start = max(0.0, mid - (target_duration / 2.0))
+            end = min(duration, start + target_duration)
+            return (round(start, 2), round(end, 2))
+        return (0.0, round(min(duration if duration > 0 else target_duration, target_duration), 2))
+
+    best_start = 0.0
+    max_score = -1.0
+    
+    for i in range(len(heatmap)):
+        start_t = float(heatmap[i].get("start_time", 0.0))
+        end_window_t = start_t + target_duration
+        
+        score = 0.0
+        for pt in heatmap:
+            pt_start = float(pt.get("start_time", 0.0))
+            pt_end = float(pt.get("end_time", pt_start + 1.0))
+            pt_val = float(pt.get("value", 0.0))
+            
+            if pt_start < end_window_t and pt_end > start_t:
+                score += pt_val
+                
+        if score > max_score:
+            max_score = score
+            best_start = start_t
+            
+    best_end = best_start + target_duration
+    if duration > 0 and best_end > duration:
+        best_end = duration
+        best_start = max(0.0, best_end - target_duration)
+        
+    return (round(best_start, 2), round(best_end, 2))
+
 def effective_video_height(item) -> Optional[int]:
     raw_profile = str(safe_get(item, "video_profile", "best")).strip()
     selected = VIDEO_PRESET_HEIGHT.get(raw_profile, raw_profile)
@@ -308,6 +351,12 @@ def build_command(item, output_dir: str) -> list[str]:
         cmd.extend(["--concurrent-fragments", concurrent_fragments])
 
     cookies_file = str(safe_get(item, "cookies", "")).strip()
+    if not cookies_file:
+        from core.history import get_app_data_dir
+        synced_cookies = get_app_data_dir() / "user_cookies.txt"
+        if synced_cookies.exists() and synced_cookies.stat().st_size > 0:
+            cookies_file = str(synced_cookies)
+
     if cookies_file:
         cmd.extend(["--cookies", cookies_file])
     else:
@@ -315,7 +364,15 @@ def build_command(item, output_dir: str) -> list[str]:
         if browser_cookies and browser_cookies not in ("kapali", "disabled", "off", "closed", "none", "auto"):
             cmd.extend(["--cookies-from-browser", browser_cookies])
 
-    if safe_get(item, "clip_enabled"):
+    if safe_get(item, "auto_shorts") or safe_get(item, "crop_vertical"):
+        video_info = safe_get(item, "_video_info")
+        start_sec, end_sec = extract_heatmap_peak_window(video_info, 60.0)
+        cmd.extend([
+            "--download-sections", f"*{start_sec}-{end_sec}",
+            "--force-keyframes-at-cuts",
+            "--postprocessor-args", f"ffmpeg:-ss {start_sec} -to {end_sec} -vf crop=ih*9/16:ih -avoid_negative_ts make_zero"
+        ])
+    elif safe_get(item, "clip_enabled"):
         clip_strategy = safe_get(item, "clip_strategy", "stream_seek")
         # DESIGN NOTE (full_trim): Under "full_trim", we intentionally do NOT inject yt-dlp section downloads.
         # This is an intentional design contract: the whole file is downloaded first, then trimmed in downloader.py

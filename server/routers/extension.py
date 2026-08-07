@@ -1,15 +1,45 @@
 from fastapi import APIRouter, HTTPException, status, Request
+from pydantic import BaseModel
+from typing import Optional
 from server.models import AddTaskRequest
+from core.history import get_app_data_dir
 
 router = APIRouter(
     prefix="/extension",
     tags=["extension"]
 )
 
+class CookieSyncRequest(BaseModel):
+    cookies_txt: str
+
 @router.get("/ping")
 async def extension_ping():
     """Health check for Chrome/Edge Companion Extension."""
-    return {"status": "ok", "message": "yt-dlp Downloader Pro Companion API Active"}
+    return {"status": "ok", "message": "Makara Pro Companion API Active"}
+
+@router.post("/sync-cookies")
+async def sync_cookies_from_extension(payload: CookieSyncRequest, request: Request):
+    """Receives Netscape cookies.txt string exported by browser extension and saves to app_data/user_cookies.txt."""
+    content = payload.cookies_txt.strip()
+    if not content:
+        raise HTTPException(status_code=400, detail="Empty cookies content")
+        
+    try:
+        app_dir = get_app_data_dir()
+        cookie_file = app_dir / "user_cookies.txt"
+        cookie_file.write_text(content, encoding="utf-8")
+        
+        # Also update global preferences if needed
+        controller = request.app.state.server.controller
+        controller.state.preferences.browser_cookies = str(cookie_file)
+        controller.save_state()
+        
+        return {
+            "success": True,
+            "detail": f"Çerezler başarıyla senkronize edildi ({len(content.splitlines())} satır)."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Çerez senkronizasyonu başarısız: {str(e)}")
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 async def add_from_extension(req: AddTaskRequest, request: Request):

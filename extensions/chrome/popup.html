@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +7,11 @@
   <style>
     :root {
       --bg: #0d1117;
-      --card-bg: rgba(22, 27, 34, 0.75);
-      --accent: #238636;
-      --accent-hover: #2ea043;
+      --card-bg: rgba(22, 27, 34, 0.85);
+      --accent: #e65100;
+      --accent-hover: #f57c00;
+      --purple: #7b1fa2;
+      --purple-hover: #8e24aa;
       --text: #c9d1d9;
       --text-dim: #8b949e;
       --border: rgba(48, 54, 61, 0.8);
@@ -17,7 +19,7 @@
     }
 
     body {
-      width: 320px;
+      width: 330px;
       margin: 0;
       padding: 16px;
       background-color: var(--bg);
@@ -45,8 +47,8 @@
     .logo-badge {
       width: 24px;
       height: 24px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #e8a33d, #2ea043);
+      border-radius: 6px;
+      background: linear-gradient(135deg, #e65100, #f57c00);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -60,7 +62,6 @@
       font-weight: 700;
       letter-spacing: 0.5px;
       color: #f0f6fc;
-      text-transform: uppercase;
     }
 
     .status-dot {
@@ -82,8 +83,7 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
-      margin-bottom: 14px;
-      backdrop-filter: blur(10px);
+      margin-bottom: 12px;
     }
 
     .url-label {
@@ -117,7 +117,7 @@
       margin-bottom: 6px;
     }
 
-    select, input[type="text"] {
+    select {
       width: 100%;
       background: #161b22;
       border: 1px solid var(--border);
@@ -131,6 +131,19 @@
 
     select:focus {
       border-color: #58a6ff;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .toggle-label {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 500;
     }
 
     .btn {
@@ -148,6 +161,7 @@
       justify-content: center;
       gap: 6px;
       transition: background-color 0.2s, transform 0.1s;
+      margin-bottom: 8px;
     }
 
     .btn:hover {
@@ -162,6 +176,16 @@
       background-color: #21262d;
       color: var(--text-dim);
       cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #21262d;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background-color: #30363d;
     }
 
     .toast {
@@ -192,37 +216,42 @@
 
   <div class="header">
     <div class="brand">
-      <div class="logo-badge">PRO</div>
-      <div class="title">yt-dlp Companion</div>
+      <div class="logo-badge">MP</div>
+      <div class="title">Makara Pro Companion</div>
     </div>
-    <div id="statusDot" class="status-dot" title="Desktop App Connection Status"></div>
+    <div id="statusDot" class="status-dot" title="Desktop App Status"></div>
   </div>
 
   <div class="card">
-    <div class="url-label">Active Media Link</div>
-    <div id="activeUrl" class="url-text">Detecting active tab...</div>
+    <div class="url-label">Aktif Medya Sayfası</div>
+    <div id="activeUrl" class="url-text">Algılanıyor...</div>
   </div>
 
   <div class="form-group">
-    <label for="modeSelect">Download Mode</label>
+    <label for="modeSelect">İndirme Modu</label>
     <select id="modeSelect">
-      <option value="Video">🎥 Full Video (Video + Audio)</option>
-      <option value="Audio">🎵 Audio Only (MP3 Extraction)</option>
+      <option value="Video">🎥 Tam Video (Video + Ses)</option>
+      <option value="Audio">🎵 Sadece Ses (MP3 Dönüştürme)</option>
+      <option value="Shorts">📱 Shorts / Reels (Heatmap 9:16)</option>
     </select>
   </div>
 
   <div class="form-group">
-    <label for="profileSelect">Format Profile</label>
+    <label for="profileSelect">Format Kalitesi</label>
     <select id="profileSelect">
-      <option value="best">Highest Quality (Source Default)</option>
+      <option value="best">En Yüksek Kalite (Kaynak)</option>
       <option value="1080p">Full HD (1080p MP4)</option>
       <option value="720p">HD (720p MP4)</option>
-      <option value="mp3">High Quality MP3 (320k)</option>
+      <option value="mp3">Yüksek Kalite MP3 (320k)</option>
     </select>
   </div>
 
   <button id="downloadBtn" class="btn" disabled>
-    <span>📥 Enqueue to Desktop App</span>
+    <span>⚡ Makara Pro'ya Gönder</span>
+  </button>
+
+  <button id="syncCookiesBtn" class="btn btn-secondary">
+    <span>🍪 Çerezleri Senkronize Et (Bypass Auth)</span>
   </button>
 
   <div id="toastMsg" class="toast"></div>
