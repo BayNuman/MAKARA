@@ -17,6 +17,38 @@ async def extension_ping():
     """Health check for Chrome/Edge Companion Extension."""
     return {"status": "ok", "message": "Makara Pro Companion API Active"}
 
+def sanitize_netscape_cookies(cookies_txt: str) -> str:
+    """Cleans and enforces RFC 6265 Netscape cookie formatting rules for http.cookiejar compatibility."""
+    lines = cookies_txt.splitlines()
+    clean_lines = [
+        "# Netscape HTTP Cookie File",
+        "# http://curl.haxx.se/rfc/cookie_spec.html",
+        "# Sanitized by Makara Pro",
+        ""
+    ]
+    for line in lines:
+        line_str = line.strip()
+        if not line_str or line_str.startswith("#"):
+            continue
+        parts = line_str.split("\t")
+        if len(parts) < 7:
+            continue
+        domain, include_sub, path, secure, expires, name, value = parts[:7]
+        
+        is_host_only = name.startswith("__Host-")
+        if is_host_only:
+            if domain.startswith("."):
+                domain = domain[1:]
+            include_sub = "FALSE"
+        else:
+            if domain.startswith("."):
+                include_sub = "TRUE"
+            else:
+                include_sub = "FALSE"
+                
+        clean_lines.append(f"{domain}\t{include_sub}\t{path}\t{secure}\t{expires}\t{name}\t{value}")
+    return "\n".join(clean_lines) + "\n"
+
 @router.post("/sync-cookies")
 async def sync_cookies_from_extension(payload: CookieSyncRequest, request: Request):
     """Receives Netscape cookies.txt string exported by browser extension and saves to app_data/user_cookies.txt."""
@@ -25,9 +57,10 @@ async def sync_cookies_from_extension(payload: CookieSyncRequest, request: Reque
         raise HTTPException(status_code=400, detail="Empty cookies content")
         
     try:
+        clean_content = sanitize_netscape_cookies(content)
         app_dir = get_app_data_dir()
         cookie_file = app_dir / "user_cookies.txt"
-        cookie_file.write_text(content, encoding="utf-8")
+        cookie_file.write_text(clean_content, encoding="utf-8")
         
         # Also update global preferences if needed
         controller = request.app.state.server.controller

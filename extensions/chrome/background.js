@@ -1,18 +1,34 @@
 const API_BASE = "http://127.0.0.1:8765/api";
 
-// Helper: Convert Chrome cookie array into Netscape cookies.txt format
 function convertCookiesToNetscapeFormat(cookies) {
   let output = "# Netscape HTTP Cookie File\n";
   output += "# http://curl.haxx.se/rfc/cookie_spec.html\n";
   output += "# This is a generated file! Do not edit.\n\n";
 
   for (const c of cookies) {
-    const domain = c.domain.startsWith(".") ? c.domain : "." + c.domain;
-    const includeSubdomains = c.domain.startsWith(".") ? "TRUE" : "FALSE";
+    let domain = c.domain || "";
+    let name = c.name || "";
+    
+    // RFC 6265 / Netscape rules for __Host- cookies and hostOnly cookies:
+    // Host-only cookies must not start with a leading dot.
+    const isHostOnly = c.hostOnly || name.startsWith("__Host-");
+    let includeSubdomains = "FALSE";
+    
+    if (isHostOnly) {
+      if (domain.startsWith(".")) {
+        domain = domain.substring(1);
+      }
+      includeSubdomains = "FALSE";
+    } else {
+      if (!domain.startsWith(".")) {
+        domain = "." + domain;
+      }
+      includeSubdomains = "TRUE";
+    }
+
     const path = c.path || "/";
     const secure = c.secure ? "TRUE" : "FALSE";
     const expiration = c.expirationDate ? Math.round(c.expirationDate) : 0;
-    const name = c.name || "";
     const value = c.value || "";
 
     output += `${domain}\t${includeSubdomains}\t${path}\t${secure}\t${expiration}\t${name}\t${value}\n`;
